@@ -145,12 +145,6 @@ final class Mailer
             && !preg_match('/\-{2}| {2}|\- \-/u', $value);
     }
 
-    private static function arraySearch(string $needle, array $haystack): int|string
-    {
-        $result = array_search($needle, $haystack, true);
-        return $result === false ? -1 : $result;
-    }
-
     private static function getFieldName(string $fieldKey, int $strNumber, int $intNumber): string
     {
         self::$numerals ??= array_combine(self::ENG_NUMERALS, self::RUS_NUMERALS);
@@ -196,7 +190,9 @@ final class Mailer
                     'message' => preg_replace(
                         $templatePreg,
                         $subArr['name'],
-                        ($subArr['errorMessageAsNotExists'] ?? null) ? $subArr['errorMessage'] : $notExistMessage
+                        ($subArr['errorMessageAsNotExists'] ?? null) && ($subArr['errorMessage'] ?? null)
+                            ? $subArr['errorMessage']
+                            : $notExistMessage
                     ),
                 ];
             }
@@ -206,10 +202,14 @@ final class Mailer
                     $paramKey,
                     $matches
                 )) {
+                    $strNumber = array_search($matches['strNumber'], self::ENG_NUMERALS);
+                    if ($strNumber === false) {
+                        $strNumber = -1;
+                    }
                     $tempArr = [
                         'index' => $index,
                         'key' => $key,
-                        'strNumber' => self::arraySearch($matches['strNumber'], self::ENG_NUMERALS),
+                        'strNumber' => intval($strNumber),
                         'intNumber' => strlen($matches['intNumber']) ? intval($matches['intNumber']) : -1,
                         'originalParamKey' => $paramKey,
                         'value' => trim($paramValue),
