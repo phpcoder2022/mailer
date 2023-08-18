@@ -1,0 +1,120 @@
+[
+    {
+        "method": "formatFormData",
+        "args": [
+            {
+                "name": "Asylim",
+                "email": "as@yl.im",
+                "message": "Я хочу что-то купить",
+                "agreement": "1"
+            }
+        ],
+        "output": {
+            "mode": "error",
+            "messages": [
+                {
+                    "fieldName": "name",
+                    "message": "Поле «Имя» содержит некорректное имя"
+                }
+            ]
+        }
+    },
+    {
+        "method": "formatFormData",
+        "args": [
+            {
+                "name": "Михаил",
+                "email": "michael@gmail.com",
+                "message": "Я Михаил",
+                "agreement": "on"
+            }
+        ],
+        "output": {
+            "mode": "mail",
+            "message": "<table border=\"1\"><tr data-id=\"name\"><td><b>Имя<\/b><\/td><td>Михаил<\/td><\/tr><tr data-id=\"email\"><td><b>Email<\/b><\/td><td>michael@gmail.com<\/td><\/tr><tr data-id=\"message\"><td><b>Сообщение<\/b><\/td><td>Я Михаил<\/td><\/tr><tr data-id=\"agreement\"><td><b>Согласие на обработку персональных данных<\/b><\/td><td>Да<\/td><\/tr><\/table>"
+        }
+    },
+    {
+        "method": "formatFormData",
+        "args": [
+            {
+                "name": "Иван",
+                "email": "иван@gmail.com",
+                "message": "Какой у вас ассортимент?",
+                "agreement": "on"
+            }
+        ],
+        "output": {
+            "mode": "error",
+            "messages": [
+                {
+                    "fieldName": "email",
+                    "message": "Поле «Email» содержит некорректный email"
+                }
+            ]
+        }
+    },
+    {
+        "method": "formatFormData",
+        "args": [
+            {
+                "name": "Григорий",
+                "second-name": "Анатольевич",
+                "email": "greg@gmail.com",
+                "message": "Здравствуйте. Жду предложений.",
+                "agreement": "on"
+            }
+        ],
+        "output": {
+            "mode": "mail",
+            "message": "<table border=\"1\"><tr data-id=\"name\"><td><b>Имя<\/b><\/td><td>Григорий<\/td><\/tr><tr data-id=\"second-name\"><td><b>Второе имя<\/b><\/td><td>Анатольевич<\/td><\/tr><tr data-id=\"email\"><td><b>Email<\/b><\/td><td>greg@gmail.com<\/td><\/tr><tr data-id=\"message\"><td><b>Сообщение<\/b><\/td><td>Здравствуйте. Жду предложений.<\/td><\/tr><tr data-id=\"agreement\"><td><b>Согласие на обработку персональных данных<\/b><\/td><td>Да<\/td><\/tr><\/table>"
+        }
+    },
+    {
+        "method": "formatFormData",
+        "args": [
+            {
+                "name": "Фернандо",
+                "second-name": "Марко",
+                "third-name": "де ла Хомбра",
+                "email": "fernando@gmail.com",
+                "second-email": "marco@gmail.com",
+                "third-email": "hombra@gmail.com",
+                "message": "Здравствуйте. Я путешественник. У вас есть спутниковое вещание?",
+                "message2": "Это было бы здорово",
+                "agreement": "on"
+            }
+        ],
+        "output": {
+            "mode": "mail",
+            "message": "<table border=\"1\"><tr data-id=\"name\"><td><b>Имя<\/b><\/td><td>Фернандо<\/td><\/tr><tr data-id=\"second-name\"><td><b>Второе имя<\/b><\/td><td>Марко<\/td><\/tr><tr data-id=\"third-name\"><td><b>Третье имя<\/b><\/td><td>де ла Хомбра<\/td><\/tr><tr data-id=\"email\"><td><b>Email<\/b><\/td><td>fernando@gmail.com<\/td><\/tr><tr data-id=\"second-email\"><td><b>Второй email<\/b><\/td><td>marco@gmail.com<\/td><\/tr><tr data-id=\"third-email\"><td><b>Третий email<\/b><\/td><td>hombra@gmail.com<\/td><\/tr><tr data-id=\"message\"><td><b>Сообщение<\/b><\/td><td>Здравствуйте. Я путешественник. У вас есть спутниковое вещание?<\/td><\/tr><tr data-id=\"message2\"><td><b>Сообщение 2<\/b><\/td><td>Это было бы здорово<\/td><\/tr><tr data-id=\"agreement\"><td><b>Согласие на обработку персональных данных<\/b><\/td><td>Да<\/td><\/tr><\/table>"
+        }
+    },
+    {
+        "method": "formatFormData",
+        "args": [
+            {
+                "name": "",
+                "email": "some+bigger+stuff@gmail.com",
+                "message": "LLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLCLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLCLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLCLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLCLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLCLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLC!"
+            }
+        ],
+        "output": {
+            "mode": "error",
+            "messages": [
+                {
+                    "fieldName": "name",
+                    "message": "Обязательное поле «Имя» не заполнено"
+                },
+                {
+                    "fieldName": "message",
+                    "message": "Поле «Сообщение» длиннее 500 символов"
+                },
+                {
+                    "fieldName": "agreement",
+                    "message": "Вы не дали согласие на обработку персональных данных"
+                }
+            ]
+        }
+    }
+]

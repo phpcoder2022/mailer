@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<psalm
+    errorLevel="2"
+    errorLevelComment="На 7 - 0 ошибок, на 2 - 20 ошибок, все ложноположительные"
+    resolveFromConfigFile="true"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://getpsalm.org/schema/config"
+    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+    findUnusedBaselineEntry="true"
+    findUnusedCode="false"
+>
+    <issueHandlers>
+        <MixedReturnTypeCoercion errorLevel="error" />
+        <ArgumentTypeCoercion errorLevel="error" />
+        <DirectConstructorCall errorLevel="error" />
+    </issueHandlers>
+    <projectFiles>
+        <file name="Mailer.php" />
+        <ignoreFiles>
+          <directory name="vendor" />
+        </ignoreFiles>
+    </projectFiles>
+</psalm>

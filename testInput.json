@@ -1,0 +1,73 @@
+[
+  {
+    "method":  "formatFormData",
+    "args":  [
+      {
+        "name": "Asylim",
+        "email": "as@yl.im",
+        "message": "Я хочу что-то купить",
+        "agreement": "1"
+      }
+    ]
+  },
+  {
+    "method": "formatFormData",
+    "args": [
+      {
+        "name": "Михаил",
+        "email": "michael@gmail.com",
+        "message": "Я Михаил",
+        "agreement": "on"
+      }
+    ]
+  },
+  {
+    "method": "formatFormData",
+    "args": [
+      {
+        "name": "Иван",
+        "email": "иван@gmail.com",
+        "message": "Какой у вас ассортимент?",
+        "agreement": "on"
+      }
+    ]
+  },
+  {
+    "method": "formatFormData",
+    "args": [
+      {
+        "name": "Григорий",
+        "second-name": "Анатольевич",
+        "email": "greg@gmail.com",
+        "message": "Здравствуйте. Жду предложений.",
+        "agreement": "on"
+      }
+    ]
+  },
+  {
+    "method": "formatFormData",
+    "args": [
+      {
+        "name": "Фернандо",
+        "second-name": "Марко",
+        "third-name": "де ла Хомбра",
+        "email": "fernando@gmail.com",
+        "second-email": "marco@gmail.com",
+        "third-email": "hombra@gmail.com",
+        "message": "Здравствуйте. Я путешественник. У вас есть спутниковое вещание?",
+        "message2": "Это было бы здорово",
+        "agreement": "on"
+      }
+    ]
+  },
+  {
+    "method": "formatFormData",
+    "args": [
+      {
+        "name": "",
+        "email": "some+bigger+stuff@gmail.com",
+        "message": "LLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLCLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLCLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLCLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLCLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLCLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLDLLLLKLLLLC!"
+      }
+    ]
+  }
+]

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>#TITLE#</title>
+  <link rel="shortcut icon" href="./img/favicon.svg">
+  <link rel="stylesheet" href="./css/normalize.css">
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/info.css">
+</head>
+<body class="page">
+  <svg class="hidden" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="broadcasts-arrow" viewBox="0 0 28 12">
+      <path d="M24.3536 6.35355C24.5488 6.15829 24.5488 5.84171 24.3536 5.64645L21.1716 2.46447C20.9763 2.2692 20.6597 2.2692 20.4645 2.46447C20.2692 2.65973 20.2692 2.97631 20.4645 3.17157L23.2929 6L20.4645 8.82843C20.2692 9.02369 20.2692 9.34027 20.4645 9.53553C20.6597 9.7308 20.9763 9.7308 21.1716 9.53553L24.3536 6.35355ZM4 6.5H24V5.5H4V6.5Z" fill="inherit"/>
+    </symbol>
+  </svg>
+  <main class="page__info main-reset">
+    <div class="container info-container main-reset">
+      <div class="info-container__content main-reset">
+        <h1 class="info-container__header main-reset">#HEADER#</h1>
+        <ul class="info-container__text-items main-reset" id="text-items" data-comment="id used for templating of php">
+          <li class="info-container__text-item main-reset">#TEXT_ITEM#</li>
+          <li class="info-container__text-item main-reset">#TEXT_ITEM#</li>
+          <li class="info-container__text-item main-reset">#TEXT_ITEM#</li>
+        </ul>
+        <!--##SUCCESS_FORM_SENT-->
+        <a class="info-container__link main-reset" href="#HTTP_REFERER#">
+          На главную
+          <svg class="info-container__link-icon main-reset">
+            <use xlink:href="#broadcasts-arrow" />
+          </svg>
+        </a>
+        <!--##-->
+      </div>
+    </div>
+  </main>
+</body>
+</html>
