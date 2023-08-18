@@ -337,7 +337,7 @@ final class Mailer
             [$title, $header, $successFormSent ? '\\3' : '', @$_SERVER['HTTP_REFERER'] ?: '/'],
             file_get_contents('./info.html')
         );
-        $dom = new DOMDocument();
+        $dom = new \DOMDocument();
         $dom->encoding = 'utf-8';
         @$dom->loadHtml($replaced);
         $textItemsList = $dom->getElementById('text-items');

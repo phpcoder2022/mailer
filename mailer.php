@@ -1,6 +1,8 @@
 <?php
 
-require_once './autoload.php';
+use Phpcoder2022\SimpleMailer\Mailer;
+
+require_once './vendor/autoload.php';
 
 $json = boolval(@$_POST['json']);
 $resultData = Mailer::sendForm(array_filter($_POST, fn ($key) => $key !== 'json', ARRAY_FILTER_USE_KEY), $json);

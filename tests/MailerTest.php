@@ -1,5 +1,8 @@
 <?php
 
+namespace Phpcoder2022\SimpleMailer\Tests;
+
+use Phpcoder2022\SimpleMailer\Mailer;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 

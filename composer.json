@@ -21,6 +21,9 @@
       "ext-dom": "*"
     },
     "autoload": {
-      "files": ["./autoload.php"]
+      "psr-4": {
+          "Phpcoder2022\\SimpleMailer\\": "src",
+          "Phpcoder2022\\SimpleMailer\\Tests\\": "tests"
+      }
     }
 }
