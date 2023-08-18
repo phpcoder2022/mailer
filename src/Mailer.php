@@ -1,5 +1,7 @@
 <?php
 
+namespace Phpcoder2022\SimpleMailer;
+
 /**
  * @psalm-type ErrorMessage = array{fieldName: string, message: string}
  * @psalm-type ResultMessage = array{result: bool, message: string}
@@ -132,9 +134,9 @@ final class Mailer
         fwrite(
             $logDesc,
             self::getLogTitle(date('d.m.Y H:i:s')) . PHP_EOL
-                . json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL
-                . self::getLogTitle() . PHP_EOL
-                . PHP_EOL
+            . json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL
+            . self::getLogTitle() . PHP_EOL
+            . PHP_EOL
         );
         fclose($logDesc);
     }
@@ -241,7 +243,7 @@ final class Mailer
                     if (
                         (
                             array_key_exists('requiredOnlyOriginal', $subArr)
-                                || array_key_exists('required', $subArr)
+                            || array_key_exists('required', $subArr)
                         )
                         && !mb_strlen($tempArr['value'])
                         && (array_key_exists('required', $subArr) || $paramKey === $key)
