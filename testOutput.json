@@ -167,5 +167,20 @@
                 }
             ]
         }
+    },
+    {
+        "method": "formatFormData",
+        "args": [
+            {
+                "name": "Анатолий",
+                "email": "anatoly@gmail.com",
+                "message": "<b>Bold<\/b>",
+                "agreement": "on"
+            }
+        ],
+        "output": {
+            "mode": "mail",
+            "message": "<table border=\"1\"><tr data-id=\"name\"><td><b>Имя<\/b><\/td><td>Анатолий<\/td><\/tr><tr data-id=\"email\"><td><b>Email<\/b><\/td><td>anatoly@gmail.com<\/td><\/tr><tr data-id=\"message\"><td><b>Сообщение<\/b><\/td><td>&lt;b&gt;Bold&lt;\/b&gt;<\/td><\/tr><tr data-id=\"agreement\"><td><b>Согласие на обработку персональных данных<\/b><\/td><td>Да<\/td><\/tr><\/table>"
+        }
     }
 ]
