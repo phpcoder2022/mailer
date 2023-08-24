@@ -51,7 +51,6 @@ final class Mailer
     ];
     private const RUS_NUMERALS = ['первый', 'второй', 'третий', 'четвёртый', 'пятый', 'шестой', 'седьмой', 'восьмой', 'девятый', 'десятый'];
     private const ENG_NUMERALS = ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth', 'tenth'];
-    private static array $numerals;
 
     /**
      * @param array $formData
@@ -60,11 +59,13 @@ final class Mailer
      */
     public static function sendForm(array $formData, bool $json): array
     {
+        $logger = new Logger();
         $formatResult = self::formatFormData($formData);
-        if ($formatResult['mode'] === 'mail') {
+        $formComplete = $formatResult['mode'] === 'mail';
+        if ($formComplete) {
             $sendResult = self::sendMail($formatResult['message']);
             $result = $sendResult['result'];
-            (new Logger())->write(compact('formData', 'json', 'result'));
+            $logger->write(compact('formData', 'json', 'result'));
         } else {
             $result = false;
         }
@@ -77,9 +78,9 @@ final class Mailer
         if ($json) {
             $message = json_encode(compact('header', 'textItems'), JSON_UNESCAPED_UNICODE);
         } else {
-            $message = self::loadTemplate($title, $header, $textItems, $formatResult['mode'] === 'mail');
+            $message = HtmlViewer::loadTemplate($title, $header, $textItems, $formComplete);
         }
-        return ['result' => $result, 'message' => $message, 'formComplete' => $formatResult['mode'] === 'mail'];
+        return compact('result', 'message', 'formComplete');
     }
 
     /**
@@ -123,7 +124,6 @@ final class Mailer
 
     private static function getFieldName(string $fieldKey, int $strNumber, int $intNumber): string
     {
-        self::$numerals ??= array_combine(self::ENG_NUMERALS, self::RUS_NUMERALS);
         $rusName = self::FIELDS_DATA[$fieldKey]['name'];
         if ($strNumber >= 0) {
             $rusNumber = self::RUS_NUMERALS[$strNumber];
@@ -290,39 +290,5 @@ final class Mailer
         }
         $resultStr .= '</table>';
         return ['mode' => 'mail', 'message' => $resultStr];
-    }
-
-    /**
-     * @param string $title
-     * @param string $header
-     * @param array{message: string}[] $textItems
-     * @param bool $successFormSent
-     * @return string
-     */
-    private static function loadTemplate(string $title, string $header, array $textItems, bool $successFormSent): string
-    {
-        $replaced = preg_replace(
-            [
-                '/#TITLE#/u',
-                '/#HEADER#/u',
-                '/(<!--\s*)?##SUCCESS_FORM_SEN[TD](\s*-->)?(.*?)(<!--\s*)?##(\s*-->)?/us',
-                '/#HTTP_REFER{1,2}ER#/u',
-            ],
-            [$title, $header, $successFormSent ? '\\3' : '', @$_SERVER['HTTP_REFERER'] ?: '/'],
-            file_get_contents('./info.html')
-        );
-        $dom = new \DOMDocument();
-        $dom->encoding = 'utf-8';
-        @$dom->loadHtml($replaced);
-        $textItemsList = $dom->getElementById('text-items');
-        $templateItem = $textItemsList->firstElementChild;
-        $textItemsList->textContent = '';
-        foreach ($textItems as $textItem) {
-            $newItem = $templateItem->cloneNode();
-            $newItem->textContent = $textItem['message'];
-            $textItemsList->appendChild($newItem);
-        }
-        return '<!doctype html>' . PHP_EOL
-            . preg_replace('/<\/(meta|link|br|hr|input)>/ui', '', $dom->documentElement->C14N());
     }
 }
