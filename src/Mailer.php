@@ -23,6 +23,7 @@ final class Mailer
         $logger = new Logger();
         $formatResult = (new Formatter(AboutFormLandingFieldsData::createWithData(), $formData))->format();
         $formComplete = $formatResult['mode'] === 'mail';
+        $sendResult = [];
         if ($formComplete) {
             $sendResult = self::sendMail($formatResult['message']);
             $result = $sendResult['result'];
@@ -39,7 +40,8 @@ final class Mailer
         if ($json) {
             $message = json_encode(compact('header', 'textItems'), JSON_UNESCAPED_UNICODE);
         } else {
-            $message = HtmlViewer::loadTemplate($title, $header, $textItems, $formComplete);
+            $messageItems = array_map(fn ($subArr) => ['message' => $subArr['message']], $textItems);
+            $message = HtmlViewer::loadTemplate($title, $header, $messageItems, $formComplete);
         }
         return compact('result', 'message', 'formComplete');
     }
