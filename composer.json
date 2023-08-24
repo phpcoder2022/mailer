@@ -17,13 +17,14 @@
     ],
     "minimum-stability": "dev",
     "require": {
-      "ext-mbstring": "*",
-      "ext-dom": "*"
+        "php": ">=8.1",
+        "ext-mbstring": "*",
+        "ext-dom": "*"
     },
     "autoload": {
-      "psr-4": {
+        "psr-4": {
           "Phpcoder2022\\SimpleMailer\\": "src",
           "Phpcoder2022\\SimpleMailer\\Tests\\": "tests"
-      }
+        }
     }
 }

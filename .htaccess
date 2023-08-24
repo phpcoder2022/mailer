@@ -1,0 +1,4 @@
+<FilesMatch "\.(htaccess|zip|rar|tar|t?gz|t?bz|t?hz|log|json|lock|xml|cache|gitignore)$|(?<!robots)\.txt$|^info.html$|^autoload\.|^default-hosting-index.html$|^forGiveTestData.php$">
+  Order Deny,Allow
+  Deny from all
+</FilesMatch>

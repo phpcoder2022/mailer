@@ -4,6 +4,9 @@ use Phpcoder2022\SimpleMailer\Mailer;
 
 require_once './vendor/autoload.php';
 
+if (!isset($argv)) {
+    return;
+}
 $input = json_decode(file_get_contents('testInput.json'), true);
 $output = [];
 foreach ($input as ['method' => $method, 'args' => $args]) {
