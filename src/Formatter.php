@@ -63,12 +63,12 @@ final class Formatter
         private FieldsData $fieldsData,
         array $formData
     ) {
-       $this->formData = [];
-       foreach ($formData as $paramKey => $paramValue) {
-           if (is_string($paramKey) && is_string($paramValue)) {
-               $this->formData[$paramKey] = $paramValue;
-           }
-       }
+        $this->formData = [];
+        foreach ($formData as $paramKey => $paramValue) {
+            if (is_string($paramKey) && is_string($paramValue)) {
+                $this->formData[$paramKey] = $paramValue;
+            }
+        }
     }
 
     private static function checkRusName(string $value): bool
@@ -80,20 +80,27 @@ final class Formatter
     private static function getFieldName(string $fieldKey, int $strNumber, int $intNumber): string
     {
         $rusName = self::FIELDS_DATA[$fieldKey]['name'];
-        if ($strNumber >= 0) {
-            $rusNumber = self::RUS_NUMERALS[$strNumber];
-            $rusName = mb_strtoupper(mb_substr($rusNumber, 0, 1))
-                . (
-                    $fieldKey === 'email'
-                    ? mb_substr($rusNumber, 1)
-                    : mb_substr($rusNumber, 1, -2) . ($strNumber === 2 ? 'ье' : 'ое')
-                )
-                . ' ' . mb_strtolower($rusName);
+        if ($genderNumeral = self::getGenderNumeral($strNumber, GrammaticalGender::MALE, $fieldKey)) {
+            $rusName = $genderNumeral . ' ' . mb_strtolower($rusName);
         }
         if ($intNumber >= 0) {
             $rusName = "$rusName $intNumber";
         }
         return $rusName;
+    }
+
+    private static function getGenderNumeral(int $strNumber, GrammaticalGender $grammaticalGender, string $fieldKey): string
+    {
+        if (!($strNumber >= 0 && $strNumber < count(self::RUS_NUMERALS))) {
+            return '';
+        }
+        $rusNumber = self::RUS_NUMERALS[$strNumber];
+        return mb_strtoupper(mb_substr($rusNumber, 0, 1))
+            . (
+                $fieldKey === 'email'
+                    ? mb_substr($rusNumber, 1)
+                    : mb_substr($rusNumber, 1, -2) . ($strNumber === 2 ? 'ье' : 'ое')
+            );
     }
 
     /**
