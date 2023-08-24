@@ -51,11 +51,7 @@ final class Mailer
     private static function sendMail(string $text): array
     {
         $messages = [0 => 'К сожалению, отправить не удалось', 1 => 'Успешно отправлено'];
-        if (!($_SERVER['SERVER_NAME'] ?? null)
-            || !($_SERVER['SERVER_ADDR'] ?? null)
-            || $_SERVER['SERVER_NAME'] === 'localhost'
-            || $_SERVER['SERVER_ADDR'] === '127.0.0.1'
-        ) {
+        if (self::isLocalhost()) {
             $result = false;
         } else {
             $result = mail(
@@ -75,5 +71,13 @@ final class Mailer
             );
         }
         return ['result' => $result, 'message' => $messages[intval($result)]];
+    }
+
+    private static function isLocalhost(): bool
+    {
+        return !($_SERVER['SERVER_NAME'] ?? '')
+            || !($_SERVER['SERVER_ADDR'] ?? '')
+            || $_SERVER['SERVER_NAME'] === 'localhost'
+            || $_SERVER['SERVER_ADDR'] === '127.0.0.1';
     }
 }
