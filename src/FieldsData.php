@@ -25,7 +25,7 @@ abstract class FieldsData implements \Countable, \IteratorAggregate
         return count($this->fields);
     }
 
-    /** @return \Traversable<FieldData> */
+    /** @return \Traversable<string, FieldData> */
     public function getIterator(): \Traversable
     {
         foreach ($this->fields as $key => $field) {

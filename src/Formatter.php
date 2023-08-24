@@ -108,7 +108,7 @@ final class Formatter
      */
     public function format(): array
     {
-        $copyFormData = $this->formData;
+        $notProcessedFormData = $this->formData;
         $intermediateResultArr = [];
         /** @var list<ErrorMessage> $errors */
         $errors = [];
@@ -117,23 +117,20 @@ final class Formatter
         $maxLengthMessage = 'Поле «FIELD» длиннее NUM символов';
         $templatePreg = '/FIELD/u';
         $numPreg = '/NUM/u';
-        foreach (self::FIELDS_DATA as $key => $subArr) {
-            $maxlength = array_key_exists('maxlength', $subArr) ? $subArr['maxlength'] : FieldData::DEFAULT_MAX_LENGTH;
-            if ((array_key_exists('required', $subArr) || array_key_exists('requiredOnlyOriginal', $subArr))
-                && !array_key_exists($key, $copyFormData)
-            ) {
+        foreach ($this->fieldsData as $key => $fieldData) {
+            if ($fieldData->required && !array_key_exists($key, $notProcessedFormData)) {
                 $errors[] = [
                     'fieldName' => $key,
                     'message' => preg_replace(
                         $templatePreg,
-                        $subArr['name'],
-                        ($subArr['errorMessageAsNotExists'] ?? null) && ($subArr['errorMessage'] ?? null)
-                            ? $subArr['errorMessage']
+                        $fieldData->name,
+                        $fieldData->errorMessageAsNotExists && $fieldData->errorMessage
+                            ? $fieldData->errorMessage
                             : $notExistMessage
                     ),
                 ];
             }
-            foreach ($copyFormData as $paramKey => $paramValue) {
+            foreach ($notProcessedFormData as $paramKey => $paramValue) {
                 if (preg_match(
                     '/^(?<strNumber>' . join('|', self::ENG_NUMERALS) . ')?-?' . $key . '-?(?<intNumber>\d*)$/',
                     $paramKey,
@@ -151,37 +148,35 @@ final class Formatter
                         'originalParamKey' => $paramKey,
                         'value' => trim($paramValue),
                     ];
-                    if ($maxlength && mb_strlen($tempArr['value']) > $maxlength) {
+                    if ($fieldData->maxLength !== FieldData::NO_MAX_LENGTH
+                        && mb_strlen($tempArr['value']) > $fieldData->maxLength
+                    ) {
                         $errors[] = [
                             'fieldName' => $tempArr['originalParamKey'],
                             'message' => preg_replace(
                                 [$templatePreg, $numPreg],
-                                [self::getFieldName($tempArr['key'], $tempArr['strNumber'], $tempArr['intNumber']), $maxlength],
+                                [self::getFieldName($tempArr['key'], $tempArr['strNumber'], $tempArr['intNumber']), $fieldData->maxLength],
                                 $maxLengthMessage
                             ),
                         ];
                     }
-                    if (array_key_exists('preg', $subArr) && !preg_match($subArr['preg'], $tempArr['value'])
-                        || array_key_exists('func', $subArr)
-                        && method_exists(self::class, $subArr['func'])
-                        && !($func = self::class . "::$subArr[func]")($tempArr['value'])
+                    if ($fieldData->preg && !preg_match($fieldData->preg, $tempArr['value'])
+                        || $fieldData->methodName
+                            && method_exists(self::class, $fieldData->methodName)
+                            && !($func = self::class . "::$fieldData->methodName")($tempArr['value'])
                     ) {
                         $errors[] = [
                             'fieldName' => $tempArr['originalParamKey'],
                             'message' => preg_replace(
                                 $templatePreg,
                                 self::getFieldName($tempArr['key'], $tempArr['strNumber'], $tempArr['intNumber']),
-                                $subArr['errorMessage']
+                                $fieldData->errorMessage
                             ),
                         ];
                     }
-                    if (
-                        (
-                            array_key_exists('requiredOnlyOriginal', $subArr)
-                            || array_key_exists('required', $subArr)
-                        )
+                    if ($fieldData->required
                         && !mb_strlen($tempArr['value'])
-                        && (array_key_exists('required', $subArr) || $paramKey === $key)
+                        && (!$fieldData->required->onlyForOriginalKey || $paramKey === $key)
                     ) {
                         $errors[] = [
                             'fieldName' => $tempArr['originalParamKey'],
@@ -192,11 +187,11 @@ final class Formatter
                             ),
                         ];
                     }
-                    if ($subArr['replacementValue'] ?? null) {
-                        $tempArr['value'] = $subArr['replacementValue'];
+                    if ($fieldData->replacementValue) {
+                        $tempArr['value'] = $fieldData->replacementValue;
                     }
                     $intermediateResultArr[] = $tempArr;
-                    unset($copyFormData[$paramKey]);
+                    unset($notProcessedFormData[$paramKey]);
                 }
             }
             $index++;
@@ -210,9 +205,9 @@ final class Formatter
             }
             return $a['intNumber'] - $b['intNumber'];
         });
-        ksort($copyFormData);
+        ksort($notProcessedFormData);
         $resultStr = '<table border="1">';
-        foreach ([$intermediateResultArr, $copyFormData] as $index => $arr) {
+        foreach ([$intermediateResultArr, $notProcessedFormData] as $index => $arr) {
             foreach ($arr as $key => $data) {
                 $keyText = !$index
                     ? self::getFieldName($data['key'], $data['strNumber'], $data['intNumber'])
