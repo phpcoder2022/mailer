@@ -116,5 +116,56 @@
                 }
             ]
         }
+    },
+    {
+        "method": "formatFormData",
+        "args": [
+            {
+                "name": "Сергей",
+                "email": "sergey@gmail.com",
+                "message": "Добрый день. Отсылаю коды.",
+                "agreement": "on",
+                "Код регистрации": "SIK2M-P5SK1-Z0BDW-74M6V-O8K3Q",
+                "Код активации": "MD9B2-DK7S4-UZ5L0-82JQ4-OFCI2"
+            }
+        ],
+        "output": {
+            "mode": "mail",
+            "message": "<table border=\"1\"><tr data-id=\"name\"><td><b>Имя<\/b><\/td><td>Сергей<\/td><\/tr><tr data-id=\"email\"><td><b>Email<\/b><\/td><td>sergey@gmail.com<\/td><\/tr><tr data-id=\"message\"><td><b>Сообщение<\/b><\/td><td>Добрый день. Отсылаю коды.<\/td><\/tr><tr data-id=\"agreement\"><td><b>Согласие на обработку персональных данных<\/b><\/td><td>Да<\/td><\/tr><tr data-id=\"Код активации\"><td><b>Код активации<\/b><\/td><td>MD9B2-DK7S4-UZ5L0-82JQ4-OFCI2<\/td><\/tr><tr data-id=\"Код регистрации\"><td><b>Код регистрации<\/b><\/td><td>SIK2M-P5SK1-Z0BDW-74M6V-O8K3Q<\/td><\/tr><\/table>"
+        }
+    },
+    {
+        "method": "formatFormData",
+        "args": [
+            {
+                "another-field-1": "moodle",
+                "another-field-2": "SFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFCSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFCSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFCSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFCSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFCSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFXSFSFWSFSFC"
+            }
+        ],
+        "output": {
+            "mode": "error",
+            "messages": [
+                {
+                    "fieldName": "name",
+                    "message": "Обязательное поле «Имя» не заполнено"
+                },
+                {
+                    "fieldName": "email",
+                    "message": "Обязательное поле «Email» не заполнено"
+                },
+                {
+                    "fieldName": "message",
+                    "message": "Обязательное поле «Сообщение» не заполнено"
+                },
+                {
+                    "fieldName": "agreement",
+                    "message": "Вы не дали согласие на обработку персональных данных"
+                },
+                {
+                    "fieldName": "another-field-2",
+                    "message": "Поле «another-field-2» длиннее 500 символов"
+                }
+            ]
+        }
     }
 ]
