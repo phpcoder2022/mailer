@@ -6,6 +6,10 @@ class HtmlViewer
 {
     public const DEFAULT_TEMPLATE = './info.html';
 
+    final private function __construct()
+    {
+    }
+
     /**
      * @param string $title
      * @param string $header

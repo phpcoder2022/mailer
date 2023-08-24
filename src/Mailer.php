@@ -9,6 +9,10 @@ namespace Phpcoder2022\SimpleMailer;
  */
 final class Mailer
 {
+    final private function __construct()
+    {
+    }
+
     /**
      * @param array $formData
      * @param bool $json
