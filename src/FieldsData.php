@@ -11,7 +11,7 @@ abstract class FieldsData implements \Countable, \IteratorAggregate
     {
         $this->fields = [];
         foreach ($fields as $field) {
-            if ($this->fields[$field->key]) {
+            if (isset($this->fields[$field->key])) {
                 throw new \OverflowException("Ключ \"$field->key\" уже существует");
             }
             $this->fields[$field->key] = $field;

@@ -2,6 +2,7 @@
 
 namespace Phpcoder2022\SimpleMailer\Tests;
 
+use Phpcoder2022\SimpleMailer\AboutFormLandingFieldsData;
 use Phpcoder2022\SimpleMailer\Formatter;
 use Phpcoder2022\SimpleMailer\Mailer;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -89,7 +90,7 @@ class MailerTest extends TestCase
         try {
             $actualResult = static::getMethod('formatFormData')->invoke(null, $formData);
         } catch (\ReflectionException) {
-            $actualResult = Formatter::formatFormData($formData);
+            $actualResult = (new Formatter(AboutFormLandingFieldsData::createWithData(), $formData))->format();
         }
         $this->assertEquals($result, $actualResult);
     }

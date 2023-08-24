@@ -56,6 +56,21 @@ final class Formatter
     private const RUS_NUMERALS = ['первый', 'второй', 'третий', 'четвёртый', 'пятый', 'шестой', 'седьмой', 'восьмой', 'девятый', 'десятый'];
     private const ENG_NUMERALS = ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth', 'tenth'];
 
+    /** @var array<string, string> */
+    private array $formData;
+
+    public function __construct(
+        private FieldsData $fieldsData,
+        array $formData
+    ) {
+       $this->formData = [];
+       foreach ($formData as $paramKey => $paramValue) {
+           if (is_string($paramKey) && is_string($paramValue)) {
+               $this->formData[$paramKey] = $paramValue;
+           }
+       }
+    }
+
     private static function checkRusName(string $value): bool
     {
         return preg_match('/^([А-ЯЁ]{2,}([А-ЯЁ \-]*[А-ЯЁ])?)?$/iu', $value)
@@ -82,12 +97,11 @@ final class Formatter
     }
 
     /**
-     * @param array $formData
      * @return FormatFormDataResult
      */
-    public static function formatFormData(array $formData): array
+    public function format(): array
     {
-        $copyFormData = $formData;
+        $copyFormData = $this->formData;
         $intermediateResultArr = [];
         /** @var list<ErrorMessage> $errors */
         $errors = [];

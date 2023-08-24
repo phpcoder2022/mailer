@@ -21,7 +21,7 @@ final class Mailer
     public static function sendForm(array $formData, bool $json): array
     {
         $logger = new Logger();
-        $formatResult = Formatter::formatFormData($formData);
+        $formatResult = (new Formatter(AboutFormLandingFieldsData::createWithData(), $formData))->format();
         $formComplete = $formatResult['mode'] === 'mail';
         if ($formComplete) {
             $sendResult = self::sendMail($formatResult['message']);
