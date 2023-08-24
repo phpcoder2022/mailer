@@ -51,7 +51,6 @@ final class Mailer
     ];
     private const RUS_NUMERALS = ['первый', 'второй', 'третий', 'четвёртый', 'пятый', 'шестой', 'седьмой', 'восьмой', 'девятый', 'десятый'];
     private const ENG_NUMERALS = ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth', 'tenth'];
-    private const LOG_FILE = 'forms.log';
     private static array $numerals;
 
     /**
@@ -65,7 +64,7 @@ final class Mailer
         if ($formatResult['mode'] === 'mail') {
             $sendResult = self::sendMail($formatResult['message']);
             $result = $sendResult['result'];
-            self::log(compact('formData', 'json', 'result'));
+            (new Logger())->write(compact('formData', 'json', 'result'));
         } else {
             $result = false;
         }
@@ -114,31 +113,6 @@ final class Mailer
             );
         }
         return ['result' => $result, 'message' => $messages[intval($result)]];
-    }
-
-    private static function getLogTitle(string $title = ''): string
-    {
-        $maxLen = 26;
-        $halfTitleLen = intval(mb_strlen($title) / 2);
-        return str_repeat('-', $maxLen / 2 - ($halfTitleLen + mb_strlen($title) % 2))
-            . $title
-            . str_repeat('-', $maxLen / 2 - $halfTitleLen);
-    }
-
-    private static function log(mixed $data): void
-    {
-        $logDesc = fopen(self::LOG_FILE, 'a');
-        if (!flock($logDesc, LOCK_EX)) {
-            return;
-        }
-        fwrite(
-            $logDesc,
-            self::getLogTitle(date('d.m.Y H:i:s')) . PHP_EOL
-            . json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL
-            . self::getLogTitle() . PHP_EOL
-            . PHP_EOL
-        );
-        fclose($logDesc);
     }
 
     private static function checkRusName(string $value): bool
