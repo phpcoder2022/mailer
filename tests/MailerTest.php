@@ -2,6 +2,7 @@
 
 namespace Phpcoder2022\SimpleMailer\Tests;
 
+use Phpcoder2022\SimpleMailer\Formatter;
 use Phpcoder2022\SimpleMailer\Mailer;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -85,7 +86,12 @@ class MailerTest extends TestCase
     #[DataProvider('formatFormDataProvider')]
     public function testFormatFormData(array $formData, array $result): void
     {
-        $this->assertEquals($result, static::getMethod('formatFormData')->invoke(null, $formData));
+        try {
+            $actualResult = static::getMethod('formatFormData')->invoke(null, $formData);
+        } catch (\ReflectionException) {
+            $actualResult = Formatter::formatFormData($formData);
+        }
+        $this->assertEquals($result, $actualResult);
     }
 
     public static function formatFormDataProvider(): array
