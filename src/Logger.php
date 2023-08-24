@@ -21,15 +21,15 @@ class Logger
         }
         fwrite(
             $logDesc,
-            static::getLogTitle(date('d.m.Y H:i:s')) . PHP_EOL
+            static::getSeparator(date('d.m.Y H:i:s')) . PHP_EOL
             . json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL
-            . static::getLogTitle() . PHP_EOL
+            . static::getSeparator() . PHP_EOL
             . PHP_EOL
         );
         fclose($logDesc);
     }
 
-    protected static function getLogTitle(string $title = ''): string
+    protected static function getSeparator(string $title = ''): string
     {
         $maxLen = 26;
         $titleLen = mb_strlen($title);
