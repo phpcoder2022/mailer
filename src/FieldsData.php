@@ -2,6 +2,9 @@
 
 namespace Phpcoder2022\SimpleMailer;
 
+/**
+ * @template-implements \IteratorAggregate<string, FieldData>
+ */
 abstract class FieldsData implements \Countable, \IteratorAggregate
 {
     /** @var array<string, FieldData> $fields */
