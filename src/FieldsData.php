@@ -31,17 +31,11 @@ abstract class FieldsData implements \Countable, \IteratorAggregate
     /** @return \Traversable<string, FieldData> */
     public function getIterator(): \Traversable
     {
-        foreach ($this->fields as $key => $field) {
-            yield $key => $field;
-        }
+        yield from $this->fields;
     }
 
     public function getFromKey(string $key): FieldData
     {
-        if (array_key_exists($key, $this->fields)) {
-            return $this->fields[$key];
-        } else {
-            throw new \OutOfBoundsException("Ключ \"$key\" не существует");
-        }
+        return $this->fields[$key] ?? throw new \OutOfBoundsException("Ключ \"$key\" не существует");
     }
 }
