@@ -5,6 +5,7 @@ namespace Phpcoder2022\SimpleMailer;
 /**
  * @psalm-import-type ErrorMessage from Mailer
  * @psalm-import-type FormatFormDataResult from Mailer
+ * @psalm-type TempArr = array{index: int<0, max>, key: string, strNumber: int<-1, max>, intNumber: int<-1, max>, originalParamKey: string, value: string}
  */
 
 final class Formatter
@@ -103,23 +104,12 @@ final class Formatter
                     $tempArr = [
                         'index' => $index,
                         'key' => $fieldData->key,
-                        'strNumber' => intval($strNumber),
-                        'intNumber' => strlen($matches['intNumber']) ? intval($matches['intNumber']) : -1,
+                        'strNumber' => max(intval($strNumber), -1),
+                        'intNumber' => max(strlen($matches['intNumber']) ? intval($matches['intNumber']) : -1, -1),
                         'originalParamKey' => $paramKey,
                         'value' => trim($paramValue),
                     ];
-                    if ($fieldData->maxLength !== FieldData::NO_MAX_LENGTH
-                        && mb_strlen($tempArr['value']) > $fieldData->maxLength
-                    ) {
-                        $this->errors[] = [
-                            'fieldName' => $tempArr['originalParamKey'],
-                            'message' => preg_replace(
-                                [self::FIELD_NAME_PREG, self::NUMBER_PREG],
-                                [self::getFieldName($fieldData, $tempArr['strNumber'], $tempArr['intNumber']), $fieldData->maxLength],
-                                self::MAX_LENGTH_MESSAGE
-                            ),
-                        ];
-                    }
+                    $this->checkValueLongerMaxLength($fieldData, $tempArr);
                     if ($fieldData->validateRegExp && !preg_match($fieldData->validateRegExp, $tempArr['value'])
                         || $fieldData->validateCallback  && !($fieldData->validateCallback)($tempArr['value'])
                     ) {
@@ -206,7 +196,7 @@ final class Formatter
         return ['mode' => 'mail', 'message' => $resultStr];
     }
 
-    public function checkRequiredKeyNotFound(FieldData $fieldData): void
+    private function checkRequiredKeyNotFound(FieldData $fieldData): void
     {
         if ($fieldData->required && !array_key_exists($fieldData->key, $this->notProcessedFormData)) {
             $this->addError(
@@ -217,6 +207,30 @@ final class Formatter
                     $fieldData->errorMessageAsNotExists && $fieldData->errorMessage
                         ? $fieldData->errorMessage
                         : self::NOT_EXISTS_MESSAGE
+                ),
+            );
+        }
+    }
+
+    /**
+     * @param FieldData $fieldData
+     * @param TempArr $tempArr
+     * @return void
+     */
+    private function checkValueLongerMaxLength(FieldData $fieldData, array $tempArr): void
+    {
+        if ($fieldData->maxLength !== FieldData::NO_MAX_LENGTH
+            && mb_strlen($tempArr['value']) > $fieldData->maxLength
+        ) {
+            $this->addError(
+                $tempArr['originalParamKey'],
+                preg_replace(
+                    [self::FIELD_NAME_PREG, self::NUMBER_PREG],
+                    [
+                        self::getFieldName($fieldData, $tempArr['strNumber'], $tempArr['intNumber']),
+                        $fieldData->maxLength
+                    ],
+                    self::MAX_LENGTH_MESSAGE
                 ),
             );
         }
