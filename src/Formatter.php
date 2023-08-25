@@ -85,20 +85,16 @@ final class Formatter
         /** @var list<ErrorMessage> $errors */
         $errors = [];
         $index = 0;
-        $notExistMessage = self::NOT_EXISTS_MESSAGE;
-        $maxLengthMessage = self::MAX_LENGTH_MESSAGE;
-        $templatePreg = '/FIELD/u';
-        $numPreg = '/NUM/u';
         foreach ($this->fieldsData as $key => $fieldData) {
             if ($fieldData->required && !array_key_exists($key, $notProcessedFormData)) {
                 $errors[] = [
                     'fieldName' => $key,
                     'message' => preg_replace(
-                        $templatePreg,
+                        self::FIELD_NAME_PREG,
                         $fieldData->name,
                         $fieldData->errorMessageAsNotExists && $fieldData->errorMessage
                             ? $fieldData->errorMessage
-                            : $notExistMessage
+                            : self::NOT_EXISTS_MESSAGE
                     ),
                 ];
             }
@@ -126,9 +122,9 @@ final class Formatter
                         $errors[] = [
                             'fieldName' => $tempArr['originalParamKey'],
                             'message' => preg_replace(
-                                [$templatePreg, $numPreg],
+                                [self::FIELD_NAME_PREG, self::NUMBER_PREG],
                                 [self::getFieldName($fieldData, $tempArr['strNumber'], $tempArr['intNumber']), $fieldData->maxLength],
-                                $maxLengthMessage
+                                self::MAX_LENGTH_MESSAGE
                             ),
                         ];
                     }
@@ -138,7 +134,7 @@ final class Formatter
                         $errors[] = [
                             'fieldName' => $tempArr['originalParamKey'],
                             'message' => preg_replace(
-                                $templatePreg,
+                                self::FIELD_NAME_PREG,
                                 self::getFieldName($fieldData, $tempArr['strNumber'], $tempArr['intNumber']),
                                 $fieldData->errorMessage
                             ),
@@ -151,9 +147,9 @@ final class Formatter
                         $errors[] = [
                             'fieldName' => $tempArr['originalParamKey'],
                             'message' => preg_replace(
-                                $templatePreg,
+                                self::FIELD_NAME_PREG,
                                 self::getFieldName($fieldData, $tempArr['strNumber'], $tempArr['intNumber']),
-                                $notExistMessage
+                                self::NOT_EXISTS_MESSAGE
                             ),
                         ];
                     }
@@ -187,9 +183,9 @@ final class Formatter
                     $errors[] = [
                         'fieldName' => $key,
                         'message' => preg_replace(
-                            [$templatePreg, $numPreg],
+                            [self::FIELD_NAME_PREG, self::NUMBER_PREG],
                             [$key, FieldData::DEFAULT_MAX_LENGTH],
-                            $maxLengthMessage
+                            self::MAX_LENGTH_MESSAGE
                         ),
                     ];
                 }
