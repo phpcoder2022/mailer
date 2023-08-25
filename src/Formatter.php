@@ -235,7 +235,7 @@ final class Formatter
                 return $maleRusNumber;
             case GrammaticalGender::FEMALE:
                 $tail = 'ая';
-            // no break
+                // no break
             default:
                 $tail ??= 'ое';
                 return mb_substr($maleRusNumber, 0, -2) . ($strNumber === 2 ? 'ь' . mb_substr($tail, 1) : $tail);
