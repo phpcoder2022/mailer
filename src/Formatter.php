@@ -40,8 +40,9 @@ final class Formatter
     private static function getFieldName(FieldData $fieldData, int $strNumber, int $intNumber): string
     {
         $rusName = $fieldData->name;
-        if ($genderNumeral = self::getGenderNumeral($strNumber, $fieldData->grammaticalGender, $fieldData->key)) {
-            $rusName = $genderNumeral . ' ' . mb_strtolower($rusName);
+        if ($genderNumeral = self::getGenderNumeral($strNumber, $fieldData->grammaticalGender)) {
+            $rusName = mb_strtoupper(mb_substr($genderNumeral, 0, 1)) . mb_substr($genderNumeral, 1)
+                . ' ' . mb_strtolower($rusName);
         }
         if ($intNumber >= 0) {
             $rusName = "$rusName $intNumber";
@@ -49,18 +50,22 @@ final class Formatter
         return $rusName;
     }
 
-    private static function getGenderNumeral(int $strNumber, GrammaticalGender $grammaticalGender, string $fieldKey): string
+    private static function getGenderNumeral(int $strNumber, GrammaticalGender $grammaticalGender): string
     {
         if (!($strNumber >= 0 && $strNumber < count(self::RUS_NUMERALS))) {
             return '';
         }
-        $rusNumber = self::RUS_NUMERALS[$strNumber];
-        return mb_strtoupper(mb_substr($rusNumber, 0, 1))
-            . (
-                $fieldKey === 'email'
-                    ? mb_substr($rusNumber, 1)
-                    : mb_substr($rusNumber, 1, -2) . ($strNumber === 2 ? 'ье' : 'ое')
-            );
+        $maleRusNumber = self::RUS_NUMERALS[$strNumber];
+        switch ($grammaticalGender) {
+            case GrammaticalGender::MALE:
+                return $maleRusNumber;
+            case GrammaticalGender::FEMALE:
+                $tail = 'ая';
+                // no break
+            default:
+                $tail ??= 'ое';
+                return mb_substr($maleRusNumber, 0, -2) . ($strNumber === 2 ? 'ь' . mb_substr($tail, 1) : $tail);
+        }
     }
 
     /**
