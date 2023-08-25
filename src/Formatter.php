@@ -89,7 +89,7 @@ final class Formatter
         $this->errors = [];
         $index = 0;
         foreach ($this->fieldsData as $fieldData) {
-            $this->checkRequiredKeyNotFound($fieldData, $this->notProcessedFormData);
+            $this->checkRequiredKeyNotFound($fieldData);
             foreach ($this->notProcessedFormData as $paramKey => $paramValue) {
                 if (preg_match(
                     '/^(?<strNumber>' . join('|', self::ENG_NUMERALS) . ')?-?' . $fieldData->key . '-?(?<intNumber>\d*)$/',
