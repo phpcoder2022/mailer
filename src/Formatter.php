@@ -25,11 +25,11 @@ final class Formatter
     ];
 
     /** @var array<string, string> */
-    private array $formData;
+    private array $formData = [];
     /** @var array<string, string> */
-    private array $notProcessedFormData;
+    private array $notProcessedFormData = [];
     /** @var list<ErrorMessage> $errors */
-    private array $errors;
+    private array $errors = [];
 
     public function __construct(
         private readonly FieldsData $fieldsData,
