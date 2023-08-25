@@ -25,6 +25,8 @@ final class Formatter
 
     /** @var array<string, string> */
     private array $formData;
+    /** @var array<string, string> */
+    private array $notProcessedFormData;
     /** @var list<ErrorMessage> $errors */
     private array $errors;
 
@@ -82,24 +84,13 @@ final class Formatter
      */
     public function format(): array
     {
-        $notProcessedFormData = $this->formData;
+        $this->notProcessedFormData = $this->formData;
         $intermediateResultArr = [];
         $this->errors = [];
         $index = 0;
         foreach ($this->fieldsData as $fieldData) {
-            if ($fieldData->required && !array_key_exists($fieldData->key, $notProcessedFormData)) {
-                $this->errors[] = [
-                    'fieldName' => $fieldData->key,
-                    'message' => preg_replace(
-                        self::FIELD_NAME_PREG,
-                        $fieldData->name,
-                        $fieldData->errorMessageAsNotExists && $fieldData->errorMessage
-                            ? $fieldData->errorMessage
-                            : self::NOT_EXISTS_MESSAGE
-                    ),
-                ];
-            }
-            foreach ($notProcessedFormData as $paramKey => $paramValue) {
+            $this->checkRequiredKeyNotFound($fieldData, $this->notProcessedFormData);
+            foreach ($this->notProcessedFormData as $paramKey => $paramValue) {
                 if (preg_match(
                     '/^(?<strNumber>' . join('|', self::ENG_NUMERALS) . ')?-?' . $fieldData->key . '-?(?<intNumber>\d*)$/',
                     $paramKey,
@@ -158,7 +149,7 @@ final class Formatter
                         $tempArr['value'] = $fieldData->replacementValue;
                     }
                     $intermediateResultArr[] = $tempArr;
-                    unset($notProcessedFormData[$paramKey]);
+                    unset($this->notProcessedFormData[$paramKey]);
                 }
             }
             $index++;
@@ -172,9 +163,9 @@ final class Formatter
             }
             return $a['intNumber'] - $b['intNumber'];
         });
-        ksort($notProcessedFormData);
+        ksort($this->notProcessedFormData);
         $resultStr = '<table border="1">';
-        foreach ([$intermediateResultArr, $notProcessedFormData] as $index => $arr) {
+        foreach ([$intermediateResultArr, $this->notProcessedFormData] as $index => $arr) {
             foreach ($arr as $key => $data) {
                 $keyText = !$index
                     ? self::getFieldName($this->fieldsData->getFromKey($data['key']), $data['strNumber'], $data['intNumber'])
@@ -213,6 +204,22 @@ final class Formatter
         }
         $resultStr .= '</table>';
         return ['mode' => 'mail', 'message' => $resultStr];
+    }
+
+    public function checkRequiredKeyNotFound(FieldData $fieldData): void
+    {
+        if ($fieldData->required && !array_key_exists($fieldData->key, $this->notProcessedFormData)) {
+            $this->addError(
+                $fieldData->key,
+                preg_replace(
+                    self::FIELD_NAME_PREG,
+                    $fieldData->name,
+                    $fieldData->errorMessageAsNotExists && $fieldData->errorMessage
+                        ? $fieldData->errorMessage
+                        : self::NOT_EXISTS_MESSAGE
+                ),
+            );
+        }
     }
 
     private function addError(string|int|float|null $fieldName, string|int|float|null $message): void

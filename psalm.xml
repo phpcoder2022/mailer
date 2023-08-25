@@ -15,6 +15,7 @@
         <DirectConstructorCall errorLevel="error" />
         <PossiblyUndefinedArrayOffset errorLevel="info" />
         <RedundantPropertyInitializationCheck errorLevel="info" />
+        <PropertyNotSetInConstructor errorLevel="info" />
         <PossiblyNullPropertyFetch>
             <errorLevel type="info">
                 <file name="src/HtmlViewer.php" />
