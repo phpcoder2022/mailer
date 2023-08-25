@@ -121,15 +121,7 @@ final class Formatter
             }
             $index++;
         }
-        usort($intermediateResultArr, function (array $a, array $b): int {
-            if ($a['index'] !== $b['index']) {
-                return $a['index'] - $b['index'];
-            }
-            if ($a['strNumber'] !== $b['strNumber']) {
-                return $a['strNumber'] - $b['strNumber'];
-            }
-            return $a['intNumber'] - $b['intNumber'];
-        });
+        usort($intermediateResultArr, [self::class, 'tempArrSorter']);
         ksort($this->notProcessedFormData);
         $resultStr = '<table border="1">';
         foreach ([$intermediateResultArr, $this->notProcessedFormData] as $index => $arr) {
@@ -260,5 +252,21 @@ final class Formatter
     private function addError(string|int|float|null $fieldName, string|int|float|null $message): void
     {
         $this->errors[] = ['fieldName' => strval($fieldName), 'message' => strval($message)];
+    }
+
+    /**
+     * @param TempArr $a
+     * @param TempArr $b
+     * @return int
+     */
+    private static function tempArrSorter(array $a, array $b): int
+    {
+        if ($a['index'] !== $b['index']) {
+            return $a['index'] - $b['index'];
+        }
+        if ($a['strNumber'] !== $b['strNumber']) {
+            return $a['strNumber'] - $b['strNumber'];
+        }
+        return $a['intNumber'] - $b['intNumber'];
     }
 }
