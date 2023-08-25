@@ -13,14 +13,21 @@ final class Formatter
     public const FIELD_NAME_PREG = '/' . self::FIELD_NAME_TEMPLATE . '/u';
     public const NUMBER_TEMPLATE = 'NUM';
     public const NUMBER_PREG = '/' . self::NUMBER_TEMPLATE . '/u';
-    private const RUS_NUMERALS = ['первый', 'второй', 'третий', 'четвёртый', 'пятый', 'шестой', 'седьмой', 'восьмой', 'девятый', 'десятый'];
-    private const ENG_NUMERALS = ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth', 'tenth'];
+    private const NOT_EXISTS_MESSAGE = 'Обязательное поле «' . self::FIELD_NAME_TEMPLATE . '» не заполнено';
+    private const MAX_LENGTH_MESSAGE = 'Поле «' . self::FIELD_NAME_TEMPLATE . '» '
+        . 'длиннее ' . self::NUMBER_TEMPLATE . ' символов';
+    private const RUS_NUMERALS = [
+        'первый', 'второй', 'третий', 'четвёртый', 'пятый', 'шестой', 'седьмой', 'восьмой', 'девятый', 'десятый'
+    ];
+    private const ENG_NUMERALS = [
+        'first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth', 'tenth'
+    ];
 
     /** @var array<string, string> */
     private array $formData;
 
     public function __construct(
-        private FieldsData $fieldsData,
+        private readonly FieldsData $fieldsData,
         array $formData
     ) {
         $this->formData = [];
@@ -78,8 +85,8 @@ final class Formatter
         /** @var list<ErrorMessage> $errors */
         $errors = [];
         $index = 0;
-        $notExistMessage = 'Обязательное поле «FIELD» не заполнено';
-        $maxLengthMessage = 'Поле «FIELD» длиннее NUM символов';
+        $notExistMessage = self::NOT_EXISTS_MESSAGE;
+        $maxLengthMessage = self::MAX_LENGTH_MESSAGE;
         $templatePreg = '/FIELD/u';
         $numPreg = '/NUM/u';
         foreach ($this->fieldsData as $key => $fieldData) {
