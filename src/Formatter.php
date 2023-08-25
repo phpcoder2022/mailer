@@ -86,11 +86,10 @@ final class Formatter
         $intermediateResultArr = [];
         $this->errors = [];
         $index = 0;
-        foreach ($this->fieldsData as $fieldKey => $fieldData) {
-            $fieldKey = strval($fieldKey);
-            if ($fieldData->required && !array_key_exists($fieldKey, $notProcessedFormData)) {
+        foreach ($this->fieldsData as $fieldData) {
+            if ($fieldData->required && !array_key_exists($fieldData->key, $notProcessedFormData)) {
                 $this->errors[] = [
-                    'fieldName' => $fieldKey,
+                    'fieldName' => $fieldData->key,
                     'message' => preg_replace(
                         self::FIELD_NAME_PREG,
                         $fieldData->name,
@@ -102,7 +101,7 @@ final class Formatter
             }
             foreach ($notProcessedFormData as $paramKey => $paramValue) {
                 if (preg_match(
-                    '/^(?<strNumber>' . join('|', self::ENG_NUMERALS) . ')?-?' . $fieldKey . '-?(?<intNumber>\d*)$/',
+                    '/^(?<strNumber>' . join('|', self::ENG_NUMERALS) . ')?-?' . $fieldData->key . '-?(?<intNumber>\d*)$/',
                     $paramKey,
                     $matches
                 )) {
@@ -112,7 +111,7 @@ final class Formatter
                     }
                     $tempArr = [
                         'index' => $index,
-                        'key' => $fieldKey,
+                        'key' => $fieldData->key,
                         'strNumber' => intval($strNumber),
                         'intNumber' => strlen($matches['intNumber']) ? intval($matches['intNumber']) : -1,
                         'originalParamKey' => $paramKey,
@@ -144,7 +143,7 @@ final class Formatter
                     }
                     if ($fieldData->required
                         && !mb_strlen($tempArr['value'])
-                        && (!$fieldData->required->onlyForOriginalKey || $paramKey === $fieldKey)
+                        && (!$fieldData->required->onlyForOriginalKey || $paramKey === $fieldData->key)
                     ) {
                         $this->errors[] = [
                             'fieldName' => $tempArr['originalParamKey'],
