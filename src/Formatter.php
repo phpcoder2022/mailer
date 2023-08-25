@@ -25,6 +25,8 @@ final class Formatter
 
     /** @var array<string, string> */
     private array $formData;
+    /** @var list<ErrorMessage> $errors */
+    private array $errors;
 
     public function __construct(
         private readonly FieldsData $fieldsData,
@@ -82,13 +84,12 @@ final class Formatter
     {
         $notProcessedFormData = $this->formData;
         $intermediateResultArr = [];
-        /** @var list<ErrorMessage> $errors */
-        $errors = [];
+        $this->errors = [];
         $index = 0;
         foreach ($this->fieldsData as $fieldKey => $fieldData) {
             $fieldKey = strval($fieldKey);
             if ($fieldData->required && !array_key_exists($fieldKey, $notProcessedFormData)) {
-                $errors[] = [
+                $this->errors[] = [
                     'fieldName' => $fieldKey,
                     'message' => preg_replace(
                         self::FIELD_NAME_PREG,
@@ -120,7 +121,7 @@ final class Formatter
                     if ($fieldData->maxLength !== FieldData::NO_MAX_LENGTH
                         && mb_strlen($tempArr['value']) > $fieldData->maxLength
                     ) {
-                        $errors[] = [
+                        $this->errors[] = [
                             'fieldName' => $tempArr['originalParamKey'],
                             'message' => preg_replace(
                                 [self::FIELD_NAME_PREG, self::NUMBER_PREG],
@@ -132,7 +133,7 @@ final class Formatter
                     if ($fieldData->validateRegExp && !preg_match($fieldData->validateRegExp, $tempArr['value'])
                         || $fieldData->validateCallback  && !($fieldData->validateCallback)($tempArr['value'])
                     ) {
-                        $errors[] = [
+                        $this->errors[] = [
                             'fieldName' => $tempArr['originalParamKey'],
                             'message' => preg_replace(
                                 self::FIELD_NAME_PREG,
@@ -145,7 +146,7 @@ final class Formatter
                         && !mb_strlen($tempArr['value'])
                         && (!$fieldData->required->onlyForOriginalKey || $paramKey === $fieldKey)
                     ) {
-                        $errors[] = [
+                        $this->errors[] = [
                             'fieldName' => $tempArr['originalParamKey'],
                             'message' => preg_replace(
                                 self::FIELD_NAME_PREG,
@@ -181,7 +182,7 @@ final class Formatter
                     : $key;
                 $valueText = !$index ? $data['value'] : $data;
                 if ($index && mb_strlen($valueText) > FieldData::DEFAULT_MAX_LENGTH) {
-                    $errors[] = [
+                    $this->errors[] = [
                         'fieldName' => $key,
                         'message' => preg_replace(
                             [self::FIELD_NAME_PREG, self::NUMBER_PREG],
@@ -190,7 +191,7 @@ final class Formatter
                         ),
                     ];
                 }
-                if ($errors) {
+                if ($this->errors) {
                     continue;
                 }
                 $resultStr .= '<tr data-id="' . htmlentities(!$index ? $data['originalParamKey'] : $key) . '"><td><b>'
@@ -200,10 +201,10 @@ final class Formatter
                     . '</td></tr>';
             }
         }
-        if ($errors) {
+        if ($this->errors) {
             /** @var list<ErrorMessage> $processedErrors */
             $processedErrors = [];
-            foreach ($errors as $error) {
+            foreach ($this->errors as $error) {
                 $processedErrors[] = [
                     'fieldName' => strval($error['fieldName']),
                     'message' => strval($error['message']),
@@ -213,5 +214,10 @@ final class Formatter
         }
         $resultStr .= '</table>';
         return ['mode' => 'mail', 'message' => $resultStr];
+    }
+
+    private function addError(string|int|float|null $fieldName, string|int|float|null $message): void
+    {
+        $this->errors[] = ['fieldName' => strval($fieldName), 'message' => strval($message)];
     }
 }
