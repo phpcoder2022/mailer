@@ -16,17 +16,21 @@ final class FieldData
             [a-z]{2,}
         $|^$/ix';
 
+    /** @var ?callable $validateCallback */
+    public readonly mixed $validateCallback;
+
     public function __construct(
-        public readonly string $key,
-        public readonly string $name,
+        public readonly string            $key,
+        public readonly string            $name,
         public readonly GrammaticalGender $grammaticalGender,
-        public readonly int $maxLength = self::DEFAULT_MAX_LENGTH,
-        public readonly string $preg = '',
-        public readonly string $methodName = '',
-        public readonly ?RequiredData $required = null,
-        public readonly string $errorMessage = '',
-        public readonly bool $errorMessageAsNotExists = false,
-        public readonly string $replacementValue = '',
+        public readonly int               $maxLength = self::DEFAULT_MAX_LENGTH,
+        public readonly string            $validateRegExp = '',
+        ?callable                         $validateCallback = null,
+        public readonly ?RequiredData     $required = null,
+        public readonly string            $errorMessage = '',
+        public readonly bool              $errorMessageAsNotExists = false,
+        public readonly string            $replacementValue = '',
     ) {
+        $this->validateCallback = $validateCallback;
     }
 }

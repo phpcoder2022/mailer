@@ -31,7 +31,7 @@ final class Formatter
         }
     }
 
-    private static function checkRusName(string $value): bool
+    public static function checkRusName(string $value): bool
     {
         return preg_match('/^([А-ЯЁ]{2,}([А-ЯЁ \-]*[А-ЯЁ])?)?$/iu', $value)
             && !preg_match('/\-{2}| {2}|\- \-/u', $value);
@@ -125,10 +125,8 @@ final class Formatter
                             ),
                         ];
                     }
-                    if ($fieldData->preg && !preg_match($fieldData->preg, $tempArr['value'])
-                        || $fieldData->methodName
-                            && method_exists(self::class, $fieldData->methodName)
-                            && !($func = self::class . "::$fieldData->methodName")($tempArr['value'])
+                    if ($fieldData->validateRegExp && !preg_match($fieldData->validateRegExp, $tempArr['value'])
+                        || $fieldData->validateCallback  && !($fieldData->validateCallback)($tempArr['value'])
                     ) {
                         $errors[] = [
                             'fieldName' => $tempArr['originalParamKey'],
