@@ -92,29 +92,7 @@ final class Formatter
         foreach ($this->fieldsData as $fieldData) {
             $this->checkRequiredKeyNotFound($fieldData);
             foreach ($this->notProcessedFormData as $paramKey => $paramValue) {
-                if (preg_match(
-                    '/^(?<strNumber>' . join('|', self::ENG_NUMERALS) . ')?-?' . $fieldData->key . '-?(?<intNumber>\d*)$/',
-                    $paramKey,
-                    $matches
-                )) {
-                    $strNumber = array_search($matches['strNumber'], self::ENG_NUMERALS);
-                    if ($strNumber === false) {
-                        $strNumber = -1;
-                    }
-                    $tempArr = [
-                        'index' => $index,
-                        'key' => $fieldData->key,
-                        'strNumber' => max(intval($strNumber), -1),
-                        'intNumber' => max(strlen($matches['intNumber']) ? intval($matches['intNumber']) : -1, -1),
-                        'originalParamKey' => $paramKey,
-                        'value' => trim($paramValue),
-                    ];
-                    $this->checkValueLongerMaxLength($fieldData, $tempArr);
-                    $this->checkValueViaValidators($fieldData, $tempArr);
-                    $this->checkEmptyRequiredValue($fieldData, $tempArr, $paramKey);
-                    if ($fieldData->replacementValue) {
-                        $tempArr['value'] = $fieldData->replacementValue;
-                    }
+                if ($tempArr = $this->checkFieldFromFieldsData($fieldData, $paramKey, $paramValue, $index)) {
                     $intermediateResultArr[] = $tempArr;
                     unset($this->notProcessedFormData[$paramKey]);
                 }
@@ -179,6 +157,49 @@ final class Formatter
                 ),
             );
         }
+    }
+
+    /**
+     * @param FieldData $fieldData
+     * @param string $paramKey
+     * @param string $paramValue
+     * @param int<0, max> $index
+     * @return TempArr|null
+     */
+    private function checkFieldFromFieldsData(
+        FieldData $fieldData,
+        string $paramKey,
+        string $paramValue,
+        int $index
+    ): ?array {
+        if (!preg_match(
+            '/^(?<strNumber>' . join('|', self::ENG_NUMERALS) . ')?'
+                . '-?' . $fieldData->key. '-?'
+                . '(?<intNumber>\d*)$/',
+            $paramKey,
+            $matches
+        )) {
+            return null;
+        }
+        $strNumber = array_search($matches['strNumber'], self::ENG_NUMERALS);
+        if ($strNumber === false) {
+            $strNumber = -1;
+        }
+        $tempArr = [
+            'index' => $index,
+            'key' => $fieldData->key,
+            'strNumber' => max(intval($strNumber), -1),
+            'intNumber' => max(strlen($matches['intNumber']) ? intval($matches['intNumber']) : -1, -1),
+            'originalParamKey' => $paramKey,
+            'value' => trim($paramValue),
+        ];
+        $this->checkValueLongerMaxLength($fieldData, $tempArr);
+        $this->checkValueViaValidators($fieldData, $tempArr);
+        $this->checkEmptyRequiredValue($fieldData, $tempArr, $paramKey);
+        if ($fieldData->replacementValue) {
+            $tempArr['value'] = $fieldData->replacementValue;
+        }
+        return $tempArr;
     }
 
     /**
