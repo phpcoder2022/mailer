@@ -49,37 +49,6 @@ final class Formatter
             && !preg_match('/\-{2}| {2}|\- \-/u', $value);
     }
 
-    private static function getFieldName(FieldData $fieldData, int $strNumber, int $intNumber): string
-    {
-        $rusName = $fieldData->name;
-        if ($genderNumeral = self::getGenderNumeral($strNumber, $fieldData->grammaticalGender)) {
-            $rusName = mb_strtoupper(mb_substr($genderNumeral, 0, 1)) . mb_substr($genderNumeral, 1)
-                . ' ' . mb_strtolower($rusName);
-        }
-        if ($intNumber >= 0) {
-            $rusName = "$rusName $intNumber";
-        }
-        return $rusName;
-    }
-
-    private static function getGenderNumeral(int $strNumber, GrammaticalGender $grammaticalGender): string
-    {
-        if (!($strNumber >= 0 && $strNumber < count(self::RUS_NUMERALS))) {
-            return '';
-        }
-        $maleRusNumber = self::RUS_NUMERALS[$strNumber];
-        switch ($grammaticalGender) {
-            case GrammaticalGender::MALE:
-                return $maleRusNumber;
-            case GrammaticalGender::FEMALE:
-                $tail = 'ая';
-                // no break
-            default:
-                $tail ??= 'ое';
-                return mb_substr($maleRusNumber, 0, -2) . ($strNumber === 2 ? 'ь' . mb_substr($tail, 1) : $tail);
-        }
-    }
-
     /**
      * @return FormatFormDataResult
      */
@@ -240,6 +209,37 @@ final class Formatter
     private function addError(string|int|float|null $fieldName, string|int|float|null $message): void
     {
         $this->errors[] = ['fieldName' => strval($fieldName), 'message' => strval($message)];
+    }
+
+    private static function getFieldName(FieldData $fieldData, int $strNumber, int $intNumber): string
+    {
+        $rusName = $fieldData->name;
+        if ($genderNumeral = self::getGenderNumeral($strNumber, $fieldData->grammaticalGender)) {
+            $rusName = mb_strtoupper(mb_substr($genderNumeral, 0, 1)) . mb_substr($genderNumeral, 1)
+                . ' ' . mb_strtolower($rusName);
+        }
+        if ($intNumber >= 0) {
+            $rusName = "$rusName $intNumber";
+        }
+        return $rusName;
+    }
+
+    private static function getGenderNumeral(int $strNumber, GrammaticalGender $grammaticalGender): string
+    {
+        if (!($strNumber >= 0 && $strNumber < count(self::RUS_NUMERALS))) {
+            return '';
+        }
+        $maleRusNumber = self::RUS_NUMERALS[$strNumber];
+        switch ($grammaticalGender) {
+            case GrammaticalGender::MALE:
+                return $maleRusNumber;
+            case GrammaticalGender::FEMALE:
+                $tail = 'ая';
+            // no break
+            default:
+                $tail ??= 'ое';
+                return mb_substr($maleRusNumber, 0, -2) . ($strNumber === 2 ? 'ь' . mb_substr($tail, 1) : $tail);
+        }
     }
 
     /**
