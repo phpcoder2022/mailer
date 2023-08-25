@@ -101,6 +101,7 @@ final class Formatter
         }
         usort($intermediateResultArr, [self::class, 'tempArrSorter']);
         ksort($this->notProcessedFormData);
+        $this->checkLeftFields();
         $resultStr = '<table border="1">';
         foreach ([$intermediateResultArr, $this->notProcessedFormData] as $index => $arr) {
             foreach ($arr as $key => $data) {
@@ -108,16 +109,6 @@ final class Formatter
                     ? self::getFieldName($this->fieldsData->getFromKey($data['key']), $data['strNumber'], $data['intNumber'])
                     : $key;
                 $valueText = !$index ? $data['value'] : $data;
-                if ($index && mb_strlen($valueText) > FieldData::DEFAULT_MAX_LENGTH) {
-                    $this->errors[] = [
-                        'fieldName' => $key,
-                        'message' => preg_replace(
-                            [self::FIELD_NAME_PREG, self::NUMBER_PREG],
-                            [$key, FieldData::DEFAULT_MAX_LENGTH],
-                            self::MAX_LENGTH_MESSAGE
-                        ),
-                    ];
-                }
                 if ($this->errors) {
                     continue;
                 }
@@ -289,5 +280,21 @@ final class Formatter
             return $a['strNumber'] - $b['strNumber'];
         }
         return $a['intNumber'] - $b['intNumber'];
+    }
+
+    private function checkLeftFields(): void
+    {
+        foreach ($this->notProcessedFormData as $paramKey => $paramValue) {
+            if (mb_strlen($paramValue) > FieldData::DEFAULT_MAX_LENGTH) {
+                $this->addError(
+                    $paramKey,
+                    preg_replace(
+                        [self::FIELD_NAME_PREG, self::NUMBER_PREG],
+                        [$paramKey, FieldData::DEFAULT_MAX_LENGTH],
+                        self::MAX_LENGTH_MESSAGE
+                    ),
+                );
+            }
+        }
     }
 }
