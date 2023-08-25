@@ -85,10 +85,11 @@ final class Formatter
         /** @var list<ErrorMessage> $errors */
         $errors = [];
         $index = 0;
-        foreach ($this->fieldsData as $key => $fieldData) {
-            if ($fieldData->required && !array_key_exists($key, $notProcessedFormData)) {
+        foreach ($this->fieldsData as $fieldKey => $fieldData) {
+            $fieldKey = strval($fieldKey);
+            if ($fieldData->required && !array_key_exists($fieldKey, $notProcessedFormData)) {
                 $errors[] = [
-                    'fieldName' => $key,
+                    'fieldName' => $fieldKey,
                     'message' => preg_replace(
                         self::FIELD_NAME_PREG,
                         $fieldData->name,
@@ -100,7 +101,7 @@ final class Formatter
             }
             foreach ($notProcessedFormData as $paramKey => $paramValue) {
                 if (preg_match(
-                    '/^(?<strNumber>' . join('|', self::ENG_NUMERALS) . ')?-?' . $key . '-?(?<intNumber>\d*)$/',
+                    '/^(?<strNumber>' . join('|', self::ENG_NUMERALS) . ')?-?' . $fieldKey . '-?(?<intNumber>\d*)$/',
                     $paramKey,
                     $matches
                 )) {
@@ -110,7 +111,7 @@ final class Formatter
                     }
                     $tempArr = [
                         'index' => $index,
-                        'key' => $key,
+                        'key' => $fieldKey,
                         'strNumber' => intval($strNumber),
                         'intNumber' => strlen($matches['intNumber']) ? intval($matches['intNumber']) : -1,
                         'originalParamKey' => $paramKey,
@@ -142,7 +143,7 @@ final class Formatter
                     }
                     if ($fieldData->required
                         && !mb_strlen($tempArr['value'])
-                        && (!$fieldData->required->onlyForOriginalKey || $paramKey === $key)
+                        && (!$fieldData->required->onlyForOriginalKey || $paramKey === $fieldKey)
                     ) {
                         $errors[] = [
                             'fieldName' => $tempArr['originalParamKey'],
