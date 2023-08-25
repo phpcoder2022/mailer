@@ -111,19 +111,7 @@ final class Formatter
                     ];
                     $this->checkValueLongerMaxLength($fieldData, $tempArr);
                     $this->checkValueViaValidators($fieldData, $tempArr);
-                    if ($fieldData->required
-                        && !mb_strlen($tempArr['value'])
-                        && (!$fieldData->required->onlyForOriginalKey || $paramKey === $fieldData->key)
-                    ) {
-                        $this->errors[] = [
-                            'fieldName' => $tempArr['originalParamKey'],
-                            'message' => preg_replace(
-                                self::FIELD_NAME_PREG,
-                                self::getFieldName($fieldData, $tempArr['strNumber'], $tempArr['intNumber']),
-                                self::NOT_EXISTS_MESSAGE
-                            ),
-                        ];
-                    }
+                    $this->checkEmptyRequiredValue($fieldData, $tempArr, $paramKey);
                     if ($fieldData->replacementValue) {
                         $tempArr['value'] = $fieldData->replacementValue;
                     }
@@ -246,9 +234,31 @@ final class Formatter
         }
     }
 
+    /**
+     * @param FieldData $fieldData
+     * @param TempArr $tempArr
+     * @param string $paramKey
+     * @return void
+     */
+    public function checkEmptyRequiredValue(FieldData $fieldData, array $tempArr, string $paramKey): void
+    {
+        if ($fieldData->required
+            && !mb_strlen($tempArr['value'])
+            && (!$fieldData->required->onlyForOriginalKey || $paramKey === $fieldData->key)
+        ) {
+            $this->addError(
+                $tempArr['originalParamKey'],
+                preg_replace(
+                    self::FIELD_NAME_PREG,
+                    self::getFieldName($fieldData, $tempArr['strNumber'], $tempArr['intNumber']),
+                    self::NOT_EXISTS_MESSAGE
+                ),
+            );
+        }
+    }
+
     private function addError(string|int|float|null $fieldName, string|int|float|null $message): void
     {
         $this->errors[] = ['fieldName' => strval($fieldName), 'message' => strval($message)];
     }
-
 }
