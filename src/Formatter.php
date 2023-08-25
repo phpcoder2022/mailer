@@ -102,35 +102,11 @@ final class Formatter
         usort($intermediateResultArr, [self::class, 'tempArrSorter']);
         ksort($this->notProcessedFormData);
         $this->checkLeftFields();
-        $resultStr = '<table border="1">';
-        foreach ([$intermediateResultArr, $this->notProcessedFormData] as $index => $arr) {
-            foreach ($arr as $key => $data) {
-                $keyText = !$index
-                    ? self::getFieldName($this->fieldsData->getFromKey($data['key']), $data['strNumber'], $data['intNumber'])
-                    : $key;
-                $valueText = !$index ? $data['value'] : $data;
-                if ($this->errors) {
-                    continue;
-                }
-                $resultStr .= '<tr data-id="' . htmlentities(!$index ? $data['originalParamKey'] : $key) . '"><td><b>'
-                    . htmlentities($keyText)
-                    . '</b></td><td>'
-                    . htmlentities($valueText)
-                    . '</td></tr>';
-            }
-        }
+        /** @psalm-suppress TypeDoesNotContainType */
         if ($this->errors) {
-            /** @var list<ErrorMessage> $processedErrors */
-            $processedErrors = [];
-            foreach ($this->errors as $error) {
-                $processedErrors[] = [
-                    'fieldName' => strval($error['fieldName']),
-                    'message' => strval($error['message']),
-                ];
-            }
-            return ['mode' => 'error', 'messages' => $processedErrors];
+            return ['mode' => 'error', 'messages' => $this->errors];
         }
-        $resultStr .= '</table>';
+        $resultStr = $this->getBuildedHtml($intermediateResultArr);
         return ['mode' => 'mail', 'message' => $resultStr];
     }
 
@@ -244,7 +220,7 @@ final class Formatter
      * @param string $paramKey
      * @return void
      */
-    public function checkEmptyRequiredValue(FieldData $fieldData, array $tempArr, string $paramKey): void
+    private function checkEmptyRequiredValue(FieldData $fieldData, array $tempArr, string $paramKey): void
     {
         if ($fieldData->required
             && !mb_strlen($tempArr['value'])
@@ -296,5 +272,32 @@ final class Formatter
                 );
             }
         }
+    }
+
+    /**
+     * @param list<TempArr> $intermediateResultArr
+     * @return string
+     */
+    private function getBuildedHtml(array $intermediateResultArr): string
+    {
+        $resultStr = '<table border="1">';
+        foreach ([$intermediateResultArr, $this->notProcessedFormData] as $arr) {
+            foreach ($arr as $key => $data) {
+                $key = strval($key);
+                $keyText = is_array($data)
+                    ? self::getFieldName($this->fieldsData->getFromKey($data['key']), $data['strNumber'], $data['intNumber'])
+                    : $key;
+                $valueText = is_array($data) ? $data['value'] : $data;
+                $resultStr .= '<tr data-id="'
+                    . htmlentities(is_array($data) ? $data['originalParamKey'] : $key)
+                    . '"><td><b>'
+                    . htmlentities($keyText)
+                    . '</b></td><td>'
+                    . htmlentities($valueText)
+                    . '</td></tr>';
+            }
+        }
+        $resultStr .= '</table>';
+        return $resultStr;
     }
 }
