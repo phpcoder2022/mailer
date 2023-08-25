@@ -13,22 +13,6 @@
         <MixedReturnTypeCoercion errorLevel="error" />
         <ArgumentTypeCoercion errorLevel="error" />
         <DirectConstructorCall errorLevel="error" />
-        <PossiblyUndefinedArrayOffset errorLevel="info" />
-        <PossiblyNullPropertyFetch>
-            <errorLevel type="info">
-                <file name="src/HtmlViewer.php" />
-            </errorLevel>
-        </PossiblyNullPropertyFetch>
-        <PossiblyNullPropertyAssignment>
-            <errorLevel type="info">
-                <file name="src/HtmlViewer.php" />
-            </errorLevel>
-        </PossiblyNullPropertyAssignment>
-        <PossiblyNullReference>
-            <errorLevel type="info">
-                <file name="src/HtmlViewer.php" />
-            </errorLevel>
-        </PossiblyNullReference>
     </issueHandlers>
     <projectFiles>
         <directory name="src" />

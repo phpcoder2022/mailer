@@ -39,7 +39,9 @@ class HtmlViewer
         $dom->encoding = 'utf-8';
         @$dom->loadHtml($replaced);
         $textItemsList = $dom->getElementById('text-items');
+        $textItemsList = static::getCheckedDomElement($textItemsList, "Не найден элемент-список с id=\"text-items\"");
         $templateItem = $textItemsList->firstElementChild;
+        $templateItem = static::getCheckedDomElement($templateItem, "Список #text-items не содержит элементов");
         $textItemsList->textContent = '';
         foreach ($textItems as $textItem) {
             $newItem = $templateItem->cloneNode();
@@ -48,5 +50,14 @@ class HtmlViewer
         }
         return '<!doctype html>' . PHP_EOL
             . preg_replace('/<\/(meta|link|br|hr|input)>/ui', '', $dom->documentElement->C14N());
+    }
+
+    protected static function getCheckedDomElement(?\DOMElement $element, string $message): \DOMElement
+    {
+        if ($element instanceof \DOMElement) {
+            return $element;
+        } else {
+            throw new \LogicException("Шаблон некорректен: $message");
+        }
     }
 }
