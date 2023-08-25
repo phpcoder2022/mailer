@@ -25,6 +25,7 @@ final class Mailer
         $formComplete = $formatResult['mode'] === 'mail';
         $sendResult = [];
         if ($formComplete) {
+            /** @psalm-suppress PossiblyUndefinedArrayOffset : psalm сплющил исходный тип, ошибка ложноположительная  */
             $sendResult = self::sendMail($formatResult['message']);
             $result = $sendResult['result'];
             $logger->write(compact('formData', 'json', 'result'));
@@ -77,6 +78,7 @@ final class Mailer
 
     private static function isLocalhost(): bool
     {
+        /** @psalm-suppress PossiblyUndefinedArrayOffset */
         return !($_SERVER['SERVER_NAME'] ?? '')
             || !($_SERVER['SERVER_ADDR'] ?? '')
             || $_SERVER['SERVER_NAME'] === 'localhost'
