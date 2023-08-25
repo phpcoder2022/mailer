@@ -1,0 +1,8 @@
+# To: Отправка на адрес почтового ящика для интеграции
+w-wave.radio@yandex.ru
+# Subject: Тема письма
+Интеграция: новый клиент
+# From: Отправитель (ящик домена сайта)
+letter-collector@w-wave.nebosvod-msk.ru
+# Reply-To: Ответные письма с ящика интеграции посылать на адрес
+phpcoder2022@yandex.ru
