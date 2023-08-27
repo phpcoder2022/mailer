@@ -14,7 +14,7 @@ class Mailer
     {
     }
 
-    public static function sendMail(string $text): bool
+    public static function sendMail(string $html): bool
     {
         if (self::isLocalhost()) {
             return false;
@@ -26,7 +26,7 @@ class Mailer
             preg_replace(
                 ['/></u', '/\s+/u', '/([^\s;]{50}|;)(\S)/u'],
                 [">\r\n<", "\r\n", "\\1<span></span\r\n>\\2"],
-                $text
+                $html
             ) . "\r\n",
             [
                 'From' => $mailAddressesData['From'],
