@@ -8,7 +8,7 @@ use Phpcoder2022\SimpleMailer\Sender;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-class MailerTest extends TestCase
+class SenderTest extends TestCase
 {
     protected const FORM_COMPLETE_TEXTS = [
         0 => 'К сожалению, отправить не удалось',
