@@ -3,8 +3,8 @@
 namespace Phpcoder2022\SimpleMailer;
 
 /**
- * @psalm-import-type ErrorMessage from Mailer
- * @psalm-import-type FormatFormDataResult from Mailer
+ * @psalm-import-type ErrorMessage from Sender
+ * @psalm-import-type FormatFormDataResult from Sender
  * @psalm-type TempArr = array{index: int<0, max>, key: string, strNumber: int<-1, max>, intNumber: int<-1, max>, originalParamKey: string, value: string}
  */
 

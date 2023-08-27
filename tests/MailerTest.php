@@ -4,7 +4,7 @@ namespace Phpcoder2022\SimpleMailer\Tests;
 
 use Phpcoder2022\SimpleMailer\AboutFormLandingFieldsData;
 use Phpcoder2022\SimpleMailer\Formatter;
-use Phpcoder2022\SimpleMailer\Mailer;
+use Phpcoder2022\SimpleMailer\Sender;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -18,7 +18,7 @@ class MailerTest extends TestCase
 
     protected static function getMethod(string $name): \ReflectionMethod
     {
-        return (new \ReflectionClass(Mailer::class))->getMethod($name);
+        return (new \ReflectionClass(Sender::class))->getMethod($name);
     }
 
     #[DataProvider('sendFormProviderForLocalhost')]
