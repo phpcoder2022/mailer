@@ -194,7 +194,7 @@ final class Formatter
             && !mb_strlen($tempArr['value'])
             && (
                 !$fieldData->required->onlyForOriginalKey
-                || $tempArr['originalParamKey'] === $fieldData->key
+                    || $tempArr['originalParamKey'] === $fieldData->key
             )
         ) {
             $this->addError(

@@ -62,12 +62,14 @@ final class Sender
     public function getResultAsJson(): string
     {
         $this->throwIfNotRan();
+        $this->logger->write(__METHOD__);
         return json_encode(['header' => $this->header, 'textItems' => $this->textItems], JSON_UNESCAPED_UNICODE);
     }
 
     public function getResultAsHtml(): string
     {
         $this->throwIfNotRan();
+        $this->logger->write(__METHOD__);
         $messageItems = array_map(fn ($subArr) => ['message' => $subArr['message']], $this->textItems);
         return HtmlViewer::loadTemplate($this->title, $this->header, $messageItems, $this->lastFormComplete);
     }
