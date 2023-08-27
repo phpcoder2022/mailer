@@ -2,8 +2,6 @@
 
 namespace Phpcoder2022\SimpleMailer\Tests;
 
-use Phpcoder2022\SimpleMailer\AboutFormLandingFieldsData;
-use Phpcoder2022\SimpleMailer\Formatter;
 use Phpcoder2022\SimpleMailer\Sender;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -60,7 +58,7 @@ class SenderTest extends TestCase
     public static function sendFormProviderForLocalhost(): array
     {
         return array_reduce(
-            static::formatFormDataProvider(),
+            FormatterTest::formatProvider(),
             static function (array $accum, array $params): array {
                 $result = false;
                 $formComplete = $params[1]['mode'] === 'mail';
@@ -76,46 +74,5 @@ class SenderTest extends TestCase
             },
             [],
         );
-    }
-
-    #[DataProvider('formatFormDataProvider')]
-    public function testFormatFormData(array $formData, array $result): void
-    {
-        try {
-            $actualResult = static::getMethod('formatFormData')->invoke(null, $formData);
-        } catch (\ReflectionException) {
-            $actualResult = (new Formatter(AboutFormLandingFieldsData::createWithData(), $formData))->format();
-        }
-        $this->assertEquals($result, $actualResult);
-    }
-
-    public static function formatFormDataProvider(): array
-    {
-        $mainArr = [
-            [
-                [
-                    'name' => 'Николай',
-                    'agreement' => 'on',
-                    'message' => 'Хочу заказать радио',
-                    'email' => 'nikky@gmail.com',
-                ],
-                [
-                    'mode' => 'mail',
-                    'message' => '<table border="1">'
-                        . '<tr data-id="name"><td><b>Имя</b></td><td>Николай</td></tr>'
-                        . '<tr data-id="email"><td><b>Email</b></td><td>nikky@gmail.com</td></tr>'
-                        . '<tr data-id="message"><td><b>Сообщение</b></td><td>Хочу заказать радио</td></tr>'
-                        . '<tr data-id="agreement">'
-                            . '<td><b>Согласие на обработку персональных данных</b></td><td>Да</td>'
-                        .'</tr>'
-                        . '</table>',
-                ]
-            ],
-        ];
-        $firstProgramVersionInputAndOutputData = json_decode(file_get_contents('./testOutput.json'), true);
-        foreach ($firstProgramVersionInputAndOutputData as $item) {
-            $mainArr[] = [$item['args'][0], $item['output']];
-        }
-        return $mainArr;
     }
 }
