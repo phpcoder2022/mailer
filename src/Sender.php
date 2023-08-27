@@ -10,8 +10,13 @@ final class Sender
 {
     private const MAIL_MESSAGES = [0 => 'К сожалению, отправить не удалось', 1 => 'Успешно отправлено'];
 
-    final private function __construct()
+    private readonly Formatter $formatter;
+    private readonly Logger $logger;
+
+    public function __construct(FieldsData $fieldsData)
     {
+        $this->formatter = new Formatter($fieldsData);
+        $this->logger = new Logger();
     }
 
     /**
@@ -19,17 +24,16 @@ final class Sender
      * @param bool $json
      * @return array{result: bool, message: string, formComplete: bool}
      */
-    public static function sendForm(array $formData, bool $json): array
+    public function sendForm(array $formData, bool $json): array
     {
-        $logger = new Logger();
-        $formatResult = (new Formatter(AboutFormLandingFieldsData::createWithData()))->format($formData);
+        $formatResult = $this->formatter->format($formData);
         $formComplete = $formatResult['mode'] === 'mail';
         $mailMessage = null;
         if ($formComplete) {
             /** @psalm-suppress PossiblyUndefinedArrayOffset : psalm сплющил исходный тип, ошибка ложноположительная  */
             $result = Mailer::sendMail($formatResult['message']);
             $mailMessage = self::MAIL_MESSAGES[intval($result)];
-            $logger->write(compact('formData', 'json', 'result'));
+            $this->logger->write(compact('formData', 'json', 'result'));
         } else {
             $result = false;
         }

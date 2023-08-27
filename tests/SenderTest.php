@@ -3,6 +3,7 @@
 namespace Phpcoder2022\SimpleMailer\Tests;
 
 use Phpcoder2022\SimpleMailer\Sender;
+use Phpcoder2022\SimpleMailer\AboutFormLandingFieldsData;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -14,15 +15,13 @@ class SenderTest extends TestCase
     ];
     protected const FORM_NOT_COMPLETE_TEXT = 'Форма неправильно заполнена';
 
-    protected static function getMethod(string $name): \ReflectionMethod
-    {
-        return (new \ReflectionClass(Sender::class))->getMethod($name);
-    }
+    protected Sender $sender;
 
     #[DataProvider('sendFormProviderForLocalhost')]
     public function testSendForm(array $formData, bool $json, array $resultScheme): void
     {
-        $actualResult = static::getMethod('sendForm')->invoke(null, $formData, $json);
+        $this->sender ??= new Sender(AboutFormLandingFieldsData::createWithData());
+        $actualResult = $this->sender->sendForm($formData, $json);
         $this->assertEquals($resultScheme['result'], $actualResult['result']);
         $this->assertEquals($resultScheme['formComplete'], $actualResult['formComplete']);
         $jsonData = $json ? json_decode($actualResult['message'], true) : [];
