@@ -21,7 +21,12 @@ class SenderTest extends TestCase
     public function testSendForm(array $formData, bool $json, array $resultScheme): void
     {
         $this->sender ??= new Sender(AboutFormLandingFieldsData::createWithData());
-        $actualResult = $this->sender->sendForm($formData, $json);
+        $this->sender->sendForm($formData);
+        $actualResult = [
+            'result' => $this->sender->getLastOperationResult(),
+            'formComplete' => $this->sender->getLastFormComplete(),
+            'message' => ($getResultAs = [$this->sender, $json ? 'getResultAsJson' : 'getResultAsHtml'])()
+        ];
         $this->assertEquals($resultScheme['result'], $actualResult['result']);
         $this->assertEquals($resultScheme['formComplete'], $actualResult['formComplete']);
         $jsonData = $json ? json_decode($actualResult['message'], true) : [];

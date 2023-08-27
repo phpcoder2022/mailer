@@ -12,6 +12,11 @@ final class Sender
 
     private readonly Formatter $formatter;
     private readonly Logger $logger;
+    private bool $lastOperationResult = false;
+    private bool $lastFormComplete = false;
+    private string $title = '';
+    private string $header = '';
+    private array $textItems = [];
 
     public function __construct(FieldsData $fieldsData)
     {
@@ -19,36 +24,45 @@ final class Sender
         $this->logger = new Logger();
     }
 
-    /**
-     * @param array $formData
-     * @param bool $json
-     * @return array{result: bool, message: string, formComplete: bool}
-     */
-    public function sendForm(array $formData, bool $json): array
+    public function sendForm(array $formData): void
     {
         $formatResult = $this->formatter->format($formData);
-        $formComplete = $formatResult['mode'] === 'mail';
+        $this->lastFormComplete = $formatResult['mode'] === 'mail';
         $mailMessage = null;
-        if ($formComplete) {
+        if ($this->lastFormComplete) {
             /** @psalm-suppress PossiblyUndefinedArrayOffset : psalm сплющил исходный тип, ошибка ложноположительная  */
-            $result = Mailer::sendMail($formatResult['message']);
-            $mailMessage = self::MAIL_MESSAGES[intval($result)];
-            $this->logger->write(compact('formData', 'json', 'result'));
+            $this->lastOperationResult = Mailer::sendMail($formatResult['message']);
+            $mailMessage = self::MAIL_MESSAGES[intval($this->lastOperationResult)];
+            $this->logger->write(['formData' => $formData, 'result' => $this->lastOperationResult]);
         } else {
-            $result = false;
+            $this->lastOperationResult = false;
         }
-        $header = $mailMessage ?? 'Форма неправильно заполнена';
-        $textItems = $formatResult['messages'] ?? [$result
+        $this->header = $mailMessage ?? 'Форма неправильно заполнена';
+        $this->textItems = $formatResult['messages'] ?? [$this->lastOperationResult
             ? ['message' => 'Мы постараемся ответить в ближайшее время']
             : ['message' => 'Но мы всё равно постараемся ответить Вам']
         ];
-        $title = $formComplete && !$result ? 'Ошибка отправки' : $header;
-        if ($json) {
-            $message = json_encode(compact('header', 'textItems'), JSON_UNESCAPED_UNICODE);
-        } else {
-            $messageItems = array_map(fn ($subArr) => ['message' => $subArr['message']], $textItems);
-            $message = HtmlViewer::loadTemplate($title, $header, $messageItems, $formComplete);
-        }
-        return compact('result', 'message', 'formComplete');
+        $this->title = $this->lastFormComplete && !$this->lastOperationResult ? 'Ошибка отправки' : $this->header;
+    }
+
+    public function getLastOperationResult(): bool
+    {
+        return $this->lastOperationResult;
+    }
+
+    public function getLastFormComplete(): bool
+    {
+        return $this->lastFormComplete;
+    }
+
+    public function getResultAsJson(): string
+    {
+        return json_encode(['header' => $this->header, 'textItems' => $this->textItems], JSON_UNESCAPED_UNICODE);
+    }
+
+    public function getResultAsHtml(): string
+    {
+        $messageItems = array_map(fn ($subArr) => ['message' => $subArr['message']], $this->textItems);
+        return HtmlViewer::loadTemplate($this->title, $this->header, $messageItems, $this->lastFormComplete);
     }
 }
