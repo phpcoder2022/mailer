@@ -10,6 +10,8 @@ namespace Phpcoder2022\SimpleMailer;
  */
 final class Mailer
 {
+    private const MAIL_MESSAGES = [0 => 'К сожалению, отправить не удалось', 1 => 'Успешно отправлено'];
+
     final private function __construct()
     {
     }
@@ -24,21 +26,21 @@ final class Mailer
         $logger = new Logger();
         $formatResult = (new Formatter(AboutFormLandingFieldsData::createWithData(), $formData))->format();
         $formComplete = $formatResult['mode'] === 'mail';
-        $sendResult = [];
+        $mailMessage = null;
         if ($formComplete) {
             /** @psalm-suppress PossiblyUndefinedArrayOffset : psalm сплющил исходный тип, ошибка ложноположительная  */
-            $sendResult = self::sendMail($formatResult['message']);
-            $result = $sendResult['result'];
+            $result = self::sendMail($formatResult['message']);
+            $mailMessage = self::MAIL_MESSAGES[intval($result)];
             $logger->write(compact('formData', 'json', 'result'));
         } else {
             $result = false;
         }
-        $header = $sendResult['message'] ?? 'Форма неправильно заполнена';
+        $header = $mailMessage ?? 'Форма неправильно заполнена';
         $textItems = $formatResult['messages'] ?? [$result
             ? ['message' => 'Мы постараемся ответить в ближайшее время']
             : ['message' => 'Но мы всё равно постараемся ответить Вам']
         ];
-        $title = ($sendResult['result'] ?? null) === false ? 'Ошибка отправки' : $header;
+        $title = $formComplete && !$result ? 'Ошибка отправки' : $header;
         if ($json) {
             $message = json_encode(compact('header', 'textItems'), JSON_UNESCAPED_UNICODE);
         } else {
@@ -48,34 +50,27 @@ final class Mailer
         return compact('result', 'message', 'formComplete');
     }
 
-    /**
-     * @param string $text
-     * @return ResultMessage
-     */
-    private static function sendMail(string $text): array
+    private static function sendMail(string $text): bool
     {
-        $messages = [0 => 'К сожалению, отправить не удалось', 1 => 'Успешно отправлено'];
         if (self::isLocalhost()) {
-            $result = false;
-        } else {
-            $mailAddressesData = self::getMailAddressesAndSubject();
-            $result = mail(
-                $mailAddressesData['To'],
-                $mailAddressesData['Subject'],
-                preg_replace(
-                    ['/></u', '/\s+/u', '/([^\s;]{50}|;)(\S)/u'],
-                    [">\r\n<", "\r\n", "\\1<span></span\r\n>\\2"],
-                    $text
-                ) . "\r\n",
-                [
-                    'From' => $mailAddressesData['From'],
-                    'Reply-To' => $mailAddressesData['Reply-To'],
-                    'Content-Type' => 'text/html; charset=utf-8',
-                    'X-Mailer' => 'PHP/' . phpversion(),
-                ],
-            );
+            return false;
         }
-        return ['result' => $result, 'message' => $messages[intval($result)]];
+        $mailAddressesData = self::getMailAddressesAndSubject();
+        return mail(
+            $mailAddressesData['To'],
+            $mailAddressesData['Subject'],
+            preg_replace(
+                ['/></u', '/\s+/u', '/([^\s;]{50}|;)(\S)/u'],
+                [">\r\n<", "\r\n", "\\1<span></span\r\n>\\2"],
+                $text
+            ) . "\r\n",
+            [
+                'From' => $mailAddressesData['From'],
+                'Reply-To' => $mailAddressesData['Reply-To'],
+                'Content-Type' => 'text/html; charset=utf-8',
+                'X-Mailer' => 'PHP/' . phpversion(),
+            ],
+        );
     }
 
     private static function isLocalhost(): bool
