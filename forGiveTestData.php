@@ -10,11 +10,12 @@ if (!isset($argv)) {
 }
 $input = json_decode(file_get_contents('testInput.json'), true);
 $output = [];
+$formatter = new Formatter(AboutFormLandingFieldsData::createWithData());
 foreach ($input as ['method' => $method, 'args' => $args]) {
     $output[] = [
         'method' => $method,
         'args' => $args,
-        'output' => (new Formatter(AboutFormLandingFieldsData::createWithData(), $args[0]))->format(),
+        'output' => $formatter->format($args[0]),
     ];
 }
 file_put_contents('testOutput.json', json_encode($output, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));

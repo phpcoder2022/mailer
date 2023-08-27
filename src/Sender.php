@@ -22,7 +22,7 @@ final class Sender
     public static function sendForm(array $formData, bool $json): array
     {
         $logger = new Logger();
-        $formatResult = (new Formatter(AboutFormLandingFieldsData::createWithData(), $formData))->format();
+        $formatResult = (new Formatter(AboutFormLandingFieldsData::createWithData()))->format($formData);
         $formComplete = $formatResult['mode'] === 'mail';
         $mailMessage = null;
         if ($formComplete) {

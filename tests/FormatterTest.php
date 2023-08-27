@@ -12,7 +12,7 @@ class FormatterTest extends TestCase
     #[DataProvider('formatProvider')]
     public function testFormat(array $formData, array $result): void
     {
-        $actualResult = (new Formatter(AboutFormLandingFieldsData::createWithData(), $formData))->format();
+        $actualResult = (new Formatter(AboutFormLandingFieldsData::createWithData()))->format($formData);
         $this->assertEquals($result, $actualResult);
     }
 

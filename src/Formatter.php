@@ -25,22 +25,13 @@ final class Formatter
     ];
 
     /** @var array<string, string> */
-    private array $formData;
-    /** @var array<string, string> */
     private array $notProcessedFormData = [];
     /** @var list<ErrorMessage> $errors */
     private array $errors = [];
 
     public function __construct(
         private readonly FieldsData $fieldsData,
-        array $formData
     ) {
-        $this->formData = [];
-        foreach ($formData as $paramKey => $paramValue) {
-            if (is_string($paramKey) && is_string($paramValue)) {
-                $this->formData[$paramKey] = $paramValue;
-            }
-        }
     }
 
     public static function checkRusName(string $value): bool
@@ -52,9 +43,9 @@ final class Formatter
     /**
      * @return FormatFormDataResult
      */
-    public function format(): array
+    public function format(array $formData): array
     {
-        $this->notProcessedFormData = $this->formData;
+        $this->prepareFormData($formData);
         $intermediateResultArr = [];
         $this->errors = [];
         $index = 0;
@@ -79,6 +70,15 @@ final class Formatter
         return ['mode' => 'mail', 'message' => $resultStr];
     }
 
+    private function prepareFormData(array $formData): void
+    {
+        $this->notProcessedFormData = [];
+        foreach ($formData as $paramKey => $paramValue) {
+            if (is_string($paramKey) && is_string($paramValue)) {
+                $this->notProcessedFormData[$paramKey] = $paramValue;
+            }
+        }
+    }
     private function checkRequiredKeyNotFound(FieldData $fieldData): void
     {
         if ($fieldData->required && !array_key_exists($fieldData->key, $this->notProcessedFormData)) {
