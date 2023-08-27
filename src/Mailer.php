@@ -4,7 +4,6 @@ namespace Phpcoder2022\SimpleMailer;
 
 /**
  * @psalm-type ErrorMessage = array{fieldName: string, message: string}
- * @psalm-type ResultMessage = array{result: bool, message: string}
  * @psalm-type FormatFormDataResult = array{mode: 'mail', message: string} | array{mode: 'error', messages: non-empty-list<ErrorMessage>}
  * @psalm-type MailAddressesData = array{To: string, Subject: string, From: string, Reply-To: string}
  */

@@ -8,12 +8,6 @@ use Phpcoder2022\SimpleMailer\Mailer;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @psalm-import-type ErrorMessage from Mailer
- * @psalm-import-type ResultMessage from Mailer
- * @psalm-import-type FormatFormDataResult from Mailer
- */
-
 class MailerTest extends TestCase
 {
     protected const FORM_COMPLETE_TEXTS = [
