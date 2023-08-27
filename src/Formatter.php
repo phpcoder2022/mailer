@@ -131,7 +131,7 @@ final class Formatter
         ];
         $this->checkValueLongerMaxLength($fieldData, $tempArr);
         $this->checkValueViaValidators($fieldData, $tempArr);
-        $this->checkEmptyRequiredValue($fieldData, $tempArr, $paramKey);
+        $this->checkEmptyRequiredValue($fieldData, $tempArr);
         if ($fieldData->replacementValue) {
             $tempArr['value'] = $fieldData->replacementValue;
         }
@@ -186,14 +186,16 @@ final class Formatter
     /**
      * @param FieldData $fieldData
      * @param TempArr $tempArr
-     * @param string $paramKey
      * @return void
      */
-    private function checkEmptyRequiredValue(FieldData $fieldData, array $tempArr, string $paramKey): void
+    private function checkEmptyRequiredValue(FieldData $fieldData, array $tempArr): void
     {
         if ($fieldData->required
             && !mb_strlen($tempArr['value'])
-            && (!$fieldData->required->onlyForOriginalKey || $paramKey === $fieldData->key)
+            && (
+                !$fieldData->required->onlyForOriginalKey
+                || $tempArr['originalParamKey'] === $fieldData->key
+            )
         ) {
             $this->addError(
                 $tempArr['originalParamKey'],
