@@ -18,31 +18,34 @@ class FormatterTest extends TestCase
 
     public static function formatProvider(): array
     {
-        $mainArr = [
-            [
-                [
-                    'name' => 'Николай',
-                    'agreement' => 'on',
-                    'message' => 'Хочу заказать радио',
-                    'email' => 'nikky@gmail.com',
-                ],
-                [
-                    'mode' => 'mail',
-                    'message' => '<table border="1">'
-                        . '<tr data-id="name"><td><b>Имя</b></td><td>Николай</td></tr>'
-                        . '<tr data-id="email"><td><b>Email</b></td><td>nikky@gmail.com</td></tr>'
-                        . '<tr data-id="message"><td><b>Сообщение</b></td><td>Хочу заказать радио</td></tr>'
-                        . '<tr data-id="agreement">'
-                        . '<td><b>Согласие на обработку персональных данных</b></td><td>Да</td>'
-                        . '</tr>'
-                        . '</table>',
-                ]
-            ],
-        ];
+        $mainArr = [self::getFirstFormatTestCase()];
         $firstProgramVersionInputAndOutputData = json_decode(file_get_contents('./testOutput.json'), true);
         foreach ($firstProgramVersionInputAndOutputData as $item) {
             $mainArr[] = [$item['args'][0], $item['output']];
         }
         return $mainArr;
+    }
+
+    protected static function getFirstFormatTestCase(): array
+    {
+        return [
+            [
+                'name' => 'Николай',
+                'agreement' => 'on',
+                'message' => 'Хочу заказать радио',
+                'email' => 'nikky@gmail.com',
+            ],
+            [
+                'mode' => 'mail',
+                'message' => '<table border="1">'
+                    . '<tr data-id="name"><td><b>Имя</b></td><td>Николай</td></tr>'
+                    . '<tr data-id="email"><td><b>Email</b></td><td>nikky@gmail.com</td></tr>'
+                    . '<tr data-id="message"><td><b>Сообщение</b></td><td>Хочу заказать радио</td></tr>'
+                    . '<tr data-id="agreement">'
+                    . '<td><b>Согласие на обработку персональных данных</b></td><td>Да</td>'
+                    . '</tr>'
+                    . '</table>',
+            ]
+        ];
     }
 }
