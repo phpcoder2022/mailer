@@ -29,8 +29,6 @@ class SenderTest extends TestCase
         ];
         $this->assertEquals($resultScheme['result'], $actualResult['result']);
         $this->assertEquals($resultScheme['formComplete'], $actualResult['formComplete']);
-        $jsonData = $json ? json_decode($actualResult['message'], true) : [];
-        $textContent = !$json ? html_entity_decode($actualResult['message']) : '';
         if ($resultScheme['formComplete']) {
             $findResult = array_reduce(
                 static::FORM_COMPLETE_TEXTS,
@@ -41,20 +39,27 @@ class SenderTest extends TestCase
             $this->assertTrue($findResult, 'Сообщение об отправке (успех/неудача)');
         } else {
             $this->assertStringContainsString(static::FORM_NOT_COMPLETE_TEXT, $actualResult['message']);
-            foreach ($resultScheme['errors'] as $error) {
-                $desc = 'Описание ошибки (' . ($json ? 'json' : 'html') . '): ' . $error['message'];
-                if ($json) {
-                    $textItemsFindResult = false;
-                    foreach ($jsonData['textItems'] as $textItem) {
-                        if ($textItem['message'] === $error['message']) {
-                            $textItemsFindResult = true;
-                            break;
-                        }
+            $this->checkErrorMessages($resultScheme['errors'], $actualResult['message'], $json);
+        }
+    }
+
+    protected function checkErrorMessages(array $errors, string $rawTextContent, bool $json): void
+    {
+        $jsonData = $json ? json_decode($rawTextContent, true) : [];
+        $htmlContent = !$json ? html_entity_decode($rawTextContent) : '';
+        foreach ($errors as $error) {
+            $desc = 'Описание ошибки (' . ($json ? 'json' : 'html') . '): ' . $error['message'];
+            if ($json) {
+                $textItemsFindResult = false;
+                foreach ($jsonData['textItems'] as $textItem) {
+                    if ($textItem['message'] === $error['message']) {
+                        $textItemsFindResult = true;
+                        break;
                     }
-                    $this->assertTrue($textItemsFindResult, $desc);
-                } else {
-                    $this->assertStringContainsString($error['message'], $textContent, $desc);
                 }
+                $this->assertTrue($textItemsFindResult, $desc);
+            } else {
+                $this->assertStringContainsString($error['message'], $htmlContent, $desc);
             }
         }
     }
