@@ -2,14 +2,14 @@
 
 namespace Phpcoder2022\SimpleMailer;
 
-class Logger
+final class Logger implements LoggerInterface
 {
     public const DEFAULT_LOG_PATH = 'forms.log';
 
-    public function __construct(protected string $logPath = '')
+    public function __construct(private string $logPath = '')
     {
         if (!$this->logPath) {
-            $this->logPath = static::DEFAULT_LOG_PATH;
+            $this->logPath = self::DEFAULT_LOG_PATH;
         }
     }
 
@@ -21,15 +21,15 @@ class Logger
         }
         fwrite(
             $logDesc,
-            static::getSeparator(date('d.m.Y H:i:s')) . PHP_EOL
+            self::getSeparator(date('d.m.Y H:i:s')) . PHP_EOL
             . json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL
-            . static::getSeparator() . PHP_EOL
+            . self::getSeparator() . PHP_EOL
             . PHP_EOL
         );
         fclose($logDesc);
     }
 
-    protected static function getSeparator(string $title = ''): string
+    private static function getSeparator(string $title = ''): string
     {
         $maxLen = 26;
         $titleLen = mb_strlen($title);

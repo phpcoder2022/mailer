@@ -2,25 +2,27 @@
 
 namespace Phpcoder2022\SimpleMailer\Tests;
 
+use Phpcoder2022\SimpleMailer\DependencyInjectionContainer;
 use Phpcoder2022\SimpleMailer\Sender;
-use Phpcoder2022\SimpleMailer\AboutFormLandingFieldsData;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-class SenderTest extends TestCase
+final class SenderTest extends TestCase
 {
-    protected const FORM_COMPLETE_TEXTS = [
+    private const FORM_COMPLETE_TEXTS = [
         0 => 'К сожалению, отправить не удалось',
         1 => 'Успешно отправлено',
     ];
-    protected const FORM_NOT_COMPLETE_TEXT = 'Форма неправильно заполнена';
+    private const FORM_NOT_COMPLETE_TEXT = 'Форма неправильно заполнена';
 
-    protected Sender $sender;
+    private DependencyInjectionContainer $container;
+    private Sender $sender;
 
     #[DataProvider('sendFormProviderForLocalhost')]
     public function testSendForm(array $formData, bool $json, array $resultScheme): void
     {
-        $this->sender ??= new Sender(AboutFormLandingFieldsData::createWithData());
+        $this->container ??= new DependencyInjectionContainer();
+        $this->sender ??= $this->container->get(Sender::class);
         $this->sender->sendForm($formData);
         $actualResult = [
             'result' => $this->sender->getLastOperationResult(),
@@ -31,19 +33,19 @@ class SenderTest extends TestCase
         $this->assertEquals($resultScheme['formComplete'], $actualResult['formComplete']);
         if ($resultScheme['formComplete']) {
             $findResult = array_reduce(
-                static::FORM_COMPLETE_TEXTS,
+                self::FORM_COMPLETE_TEXTS,
                 static fn (bool $accum, string $message) =>
                     $accum || str_contains($actualResult['message'], $message),
                 false,
             );
             $this->assertTrue($findResult, 'Сообщение об отправке (успех/неудача)');
         } else {
-            $this->assertStringContainsString(static::FORM_NOT_COMPLETE_TEXT, $actualResult['message']);
+            $this->assertStringContainsString(self::FORM_NOT_COMPLETE_TEXT, $actualResult['message']);
             $this->checkErrorMessages($resultScheme['errors'], $actualResult['message'], $json);
         }
     }
 
-    protected function checkErrorMessages(array $errors, string $rawTextContent, bool $json): void
+    private function checkErrorMessages(array $errors, string $rawTextContent, bool $json): void
     {
         $jsonData = $json ? json_decode($rawTextContent, true) : [];
         $htmlContent = !$json ? html_entity_decode($rawTextContent) : '';

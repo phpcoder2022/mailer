@@ -10,8 +10,6 @@ final class Sender
 {
     private const MAIL_MESSAGES = [0 => 'К сожалению, отправить не удалось', 1 => 'Успешно отправлено'];
 
-    private readonly Formatter $formatter;
-    private readonly Logger $logger;
     private bool $isRan = false;
     private bool $lastOperationResult = false;
     private bool $lastFormComplete = false;
@@ -19,10 +17,10 @@ final class Sender
     private string $header = '';
     private array $textItems = [];
 
-    public function __construct(FieldsData $fieldsData)
-    {
-        $this->formatter = new Formatter($fieldsData);
-        $this->logger = new Logger();
+    public function __construct(
+        private readonly FormatterInterface $formatter,
+        private readonly LoggerInterface $logger
+    ) {
     }
 
     public function sendForm(array $formData): void

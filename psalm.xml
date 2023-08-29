@@ -13,11 +13,13 @@
         <MixedReturnTypeCoercion errorLevel="error" />
         <ArgumentTypeCoercion errorLevel="error" />
         <DirectConstructorCall errorLevel="error" />
+        <UnsupportedPropertyReferenceUsage errorLevel="suppress" />
     </issueHandlers>
     <projectFiles>
         <directory name="src" />
         <ignoreFiles>
           <directory name="vendor" />
+          <directory name="tests" />
         </ignoreFiles>
     </projectFiles>
 </psalm>

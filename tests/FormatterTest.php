@@ -2,17 +2,22 @@
 
 namespace Phpcoder2022\SimpleMailer\Tests;
 
-use Phpcoder2022\SimpleMailer\AboutFormLandingFieldsData;
+use Phpcoder2022\SimpleMailer\DependencyInjectionContainer;
 use Phpcoder2022\SimpleMailer\Formatter;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-class FormatterTest extends TestCase
+final class FormatterTest extends TestCase
 {
+    private DependencyInjectionContainer $container;
+    private Formatter $formatter;
+
     #[DataProvider('formatProvider')]
     public function testFormat(array $formData, array $result): void
     {
-        $actualResult = (new Formatter(AboutFormLandingFieldsData::createWithData()))->format($formData);
+        $this->container ??= new DependencyInjectionContainer();
+        $this->formatter ??= $this->container->get(Formatter::class);
+        $actualResult = $this->formatter->format($formData);
         $this->assertEquals($result, $actualResult);
     }
 
@@ -26,7 +31,7 @@ class FormatterTest extends TestCase
         return $mainArr;
     }
 
-    protected static function getFirstFormatTestCase(): array
+    private static function getFirstFormatTestCase(): array
     {
         return [
             [

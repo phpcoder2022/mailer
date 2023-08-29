@@ -1,12 +1,12 @@
 <?php
 
 use Phpcoder2022\SimpleMailer\Sender;
-use Phpcoder2022\SimpleMailer\AboutFormLandingFieldsData;
+use Phpcoder2022\SimpleMailer\DependencyInjectionContainer;
 
 require_once './vendor/autoload.php';
 
 $json = boolval(@$_POST['json']);
-$sender = new Sender(AboutFormLandingFieldsData::createWithData());
+$sender = (new DependencyInjectionContainer())->get(Sender::class);
 $sender->sendForm(array_filter($_POST, fn ($key) => $key !== 'json', ARRAY_FILTER_USE_KEY));
 http_response_code(
     $sender->getLastOperationResult() ? 200 : ($sender->getLastFormComplete() ? 503 : 400)

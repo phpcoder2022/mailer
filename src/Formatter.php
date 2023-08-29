@@ -8,12 +8,8 @@ namespace Phpcoder2022\SimpleMailer;
  * @psalm-type TempArr = array{index: int<0, max>, key: string, strNumber: int<-1, max>, intNumber: int<-1, max>, originalParamKey: string, value: string}
  */
 
-final class Formatter
+final class Formatter implements FormatterInterface
 {
-    public const FIELD_NAME_TEMPLATE = 'FIELD';
-    public const FIELD_NAME_PREG = '/' . self::FIELD_NAME_TEMPLATE . '/u';
-    public const NUMBER_TEMPLATE = 'NUM';
-    public const NUMBER_PREG = '/' . self::NUMBER_TEMPLATE . '/u';
     private const NOT_EXISTS_MESSAGE = 'Обязательное поле «' . self::FIELD_NAME_TEMPLATE . '» не заполнено';
     private const MAX_LENGTH_MESSAGE = 'Поле «' . self::FIELD_NAME_TEMPLATE . '» '
         . 'длиннее ' . self::NUMBER_TEMPLATE . ' символов';
@@ -40,9 +36,7 @@ final class Formatter
             && !preg_match('/\-{2}| {2}|\- \-/u', $value);
     }
 
-    /**
-     * @return FormatFormDataResult
-     */
+    /** @return FormatFormDataResult */
     public function format(array $formData): array
     {
         $this->prepareFormData($formData);
