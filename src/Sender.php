@@ -5,10 +5,21 @@ namespace Phpcoder2022\SimpleMailer;
 /**
  * @psalm-type ErrorMessage = array{fieldName: string, message: string}
  * @psalm-type FormatFormDataResult = array{mode: 'mail', message: string} | array{mode: 'error', messages: non-empty-list<ErrorMessage>}
+ * @psalm-type TextsArr = array{mailSuccessHeader: string, mailFailHeader: string, formCompleteFailHeader: string, mailFailTitle: string, mailSuccessTextItem: string, mailFailTextItem: string}
  */
 final class Sender
 {
-    private const MAIL_MESSAGES = [0 => 'К сожалению, отправить не удалось', 1 => 'Успешно отправлено'];
+    public const DEFAULT_TEXTS_FILE_PATH = 'textsForSendForm.ini';
+
+    /** @var TextsArr */
+    private const TEXTS_ARR_STUB = [
+        'mailSuccessHeader' => '',
+        'mailFailHeader' => '',
+        'formCompleteFailHeader' => '',
+        'mailFailTitle' => '',
+        'mailSuccessTextItem' => '',
+        'mailFailTextItem' => '',
+    ];
 
     private ?bool $lastOperationResult = null;
     private ?bool $lastFormComplete = null;
@@ -18,7 +29,8 @@ final class Sender
 
     public function __construct(
         private readonly FormatterInterface $formatter,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
+        private readonly string $textsFilePath = self::DEFAULT_TEXTS_FILE_PATH,
     ) {
     }
 
@@ -26,21 +38,48 @@ final class Sender
     {
         $formatResult = $this->formatter->format($formData);
         $this->lastFormComplete = $formatResult['mode'] === 'mail';
+        $texts = $this->getTextsFromFile();
         $mailMessage = null;
         if ($this->lastFormComplete) {
             /** @psalm-suppress PossiblyUndefinedArrayOffset : psalm сплющил исходный тип, ошибка ложноположительная  */
             $this->lastOperationResult = Mailer::sendMail($formatResult['message']);
-            $mailMessage = self::MAIL_MESSAGES[intval($this->lastOperationResult)];
+            $mailMessage = $texts['mail' . ($this->lastOperationResult ? 'Success' : 'Fail') . 'Header'];
             $this->logger->write(['formData' => $formData, 'result' => $this->lastOperationResult]);
         } else {
             $this->lastOperationResult = false;
         }
-        $this->header = $mailMessage ?? 'Форма неправильно заполнена';
+        $this->header = $mailMessage ?? $texts['formCompleteFailHeader'];
         $this->textItems = $formatResult['messages'] ?? [$this->lastOperationResult
-            ? ['message' => 'Мы постараемся ответить в ближайшее время']
-            : ['message' => 'Но мы всё равно постараемся ответить Вам']
+            ? ['message' => $texts['mailSuccessTextItem']]
+            : ['message' => $texts['mailFailTextItem']]
         ];
-        $this->title = $this->lastFormComplete && !$this->lastOperationResult ? 'Ошибка отправки' : $this->header;
+        $this->title = $this->lastFormComplete && !$this->lastOperationResult
+            ? $texts['mailFailTitle']
+            : $this->header;
+    }
+
+    /** @return TextsArr */
+    private function getTextsFromFile(): array
+    {
+        if (!is_file($this->textsFilePath)) {
+            $errorMessage = 'Файл настроек \"' . $this->textsFilePath .  '\" для метода ' . __METHOD__ . 'не найден';
+            throw new \UnexpectedValueException($errorMessage);
+        }
+        $texts = parse_ini_file($this->textsFilePath);
+        $result = self::TEXTS_ARR_STUB;
+        $notExistsKeys = [];
+        foreach ($result as $key => $_) {
+            $result[$key] = is_string($texts[$key]) ? $texts[$key] : '';
+            if (!$result[$key]) {
+                $notExistsKeys[] = $key;
+            }
+        }
+        if ($notExistsKeys) {
+            $errorMessage = "Тексты в файле \"$this->textsFilePath\": не хватает следующих ключей: "
+                . join(', ', $notExistsKeys);
+            throw new \UnexpectedValueException($errorMessage);
+        }
+        return $result;
     }
 
     public function getLastOperationResult(): ?bool
