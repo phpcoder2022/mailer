@@ -10,11 +10,10 @@ final class Sender
 {
     private const MAIL_MESSAGES = [0 => 'К сожалению, отправить не удалось', 1 => 'Успешно отправлено'];
 
-    private bool $isRan = false;
-    private bool $lastOperationResult = false;
-    private bool $lastFormComplete = false;
-    private string $title = '';
-    private string $header = '';
+    private ?bool $lastOperationResult = null;
+    private ?bool $lastFormComplete = null;
+    private ?string $title = null;
+    private ?string $header = null;
     private array $textItems = [];
 
     public function __construct(
@@ -25,7 +24,6 @@ final class Sender
 
     public function sendForm(array $formData): void
     {
-        $this->isRan = true;
         $formatResult = $this->formatter->format($formData);
         $this->lastFormComplete = $formatResult['mode'] === 'mail';
         $mailMessage = null;
@@ -45,40 +43,32 @@ final class Sender
         $this->title = $this->lastFormComplete && !$this->lastOperationResult ? 'Ошибка отправки' : $this->header;
     }
 
-    public function getLastOperationResult(): bool
+    public function getLastOperationResult(): ?bool
     {
-        $this->throwIfNotRan();
         return $this->lastOperationResult;
     }
 
-    public function getLastFormComplete(): bool
+    public function getLastFormComplete(): ?bool
     {
-        $this->throwIfNotRan();
         return $this->lastFormComplete;
     }
 
-    public function getResultAsJson(): string
+    public function getResultAsJson(): ?string
     {
-        $this->throwIfNotRan();
+        if (is_null($this->header)) {
+            return null;
+        }
         $this->logger->write(__METHOD__);
         return json_encode(['header' => $this->header, 'textItems' => $this->textItems], JSON_UNESCAPED_UNICODE);
     }
 
-    public function getResultAsHtml(): string
+    public function getResultAsHtml(): ?string
     {
-        $this->throwIfNotRan();
+        if (is_null($this->header) || is_null($this->title) || is_null($this->lastFormComplete)) {
+            return null;
+        }
         $this->logger->write(__METHOD__);
         $messageItems = array_map(fn ($subArr) => ['message' => $subArr['message']], $this->textItems);
         return HtmlViewer::loadTemplate($this->title, $this->header, $messageItems, $this->lastFormComplete);
-    }
-
-    private function throwIfNotRan(): void
-    {
-        $class = self::class;
-        if (!$this->isRan) {
-            throw new \LogicException(
-                "Отправка формы ни разу не запускалась с этого объекта $class. Результат не существует."
-            );
-        }
     }
 }
