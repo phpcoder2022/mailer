@@ -10,7 +10,7 @@ use Phpcoder2022\SimpleMailer\Log\Logger;
 use Phpcoder2022\SimpleMailer\Mail\MailData;
 use Phpcoder2022\SimpleMailer\Mail\Mailer;
 use Phpcoder2022\SimpleMailer\ProcessHtml\HtmlViewer;
-use Phpcoder2022\SimpleMailer\Send\SendData;
+use Phpcoder2022\SimpleMailer\Send\SendTexts;
 use Phpcoder2022\SimpleMailer\Send\Sender;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
@@ -27,9 +27,9 @@ class DependencyInjectionContainer implements ContainerInterface
                 $this->get(LoggerInterface::class),
                 $this->get(HtmlViewer::class),
                 $this->get(Mailer::class),
-                $this->get(SendData::class),
+                $this->get(SendTexts::class),
             ),
-            SendData::class => fn (): SendData => new SendData(),
+            SendTexts::class => fn (): SendTexts => new SendTexts(),
             FormatterInterface::class => fn (): FormatterInterface => new Formatter(
                 $this->get(FieldsData::class)
             ),

@@ -6,7 +6,7 @@ namespace Phpcoder2022\SimpleMailer\Send;
  * @psalm-type TextsArr = array{mailSuccessHeader: string, mailFailHeader: string, formCompleteFailHeader: string, mailFailTitle: string, mailSuccessTextItem: string, mailFailTextItem: string}
  */
 
-final class SendData
+final class SendTexts
 {
     public const DEFAULT_TEXTS_FILE_PATH = 'textsForSendForm.ini';
 

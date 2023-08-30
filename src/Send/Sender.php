@@ -25,7 +25,7 @@ final class Sender
         private readonly LoggerInterface $logger,
         private readonly HtmlViewer $htmlViewer,
         private readonly Mailer $mailer,
-        private readonly SendData $sendData,
+        private readonly SendTexts $sendData,
     ) {
     }
 
