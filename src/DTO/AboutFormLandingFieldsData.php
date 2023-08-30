@@ -1,6 +1,9 @@
 <?php
 
-namespace Phpcoder2022\SimpleMailer;
+namespace Phpcoder2022\SimpleMailer\DTO;
+
+use Phpcoder2022\SimpleMailer\Format\Formatter;
+use Phpcoder2022\SimpleMailer\Format\GrammaticalGender;
 
 class AboutFormLandingFieldsData extends FieldsData
 {

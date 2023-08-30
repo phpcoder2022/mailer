@@ -1,6 +1,6 @@
 <?php
 
-namespace Phpcoder2022\SimpleMailer;
+namespace Phpcoder2022\SimpleMailer\DTO;
 
 class RequiredData
 {

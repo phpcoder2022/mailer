@@ -2,6 +2,8 @@
 
 namespace Phpcoder2022\SimpleMailer;
 
+use Phpcoder2022\SimpleMailer\Format\FormatterInterface;
+use Phpcoder2022\SimpleMailer\Mail\Mailer;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 

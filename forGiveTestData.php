@@ -1,7 +1,7 @@
 <?php
 
-use Phpcoder2022\SimpleMailer\Formatter;
-use Phpcoder2022\SimpleMailer\AboutFormLandingFieldsData;
+use Phpcoder2022\SimpleMailer\DTO\AboutFormLandingFieldsData;
+use Phpcoder2022\SimpleMailer\Format\Formatter;
 
 require_once './vendor/autoload.php';
 

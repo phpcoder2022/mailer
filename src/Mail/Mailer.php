@@ -1,6 +1,6 @@
 <?php
 
-namespace Phpcoder2022\SimpleMailer;
+namespace Phpcoder2022\SimpleMailer\Mail;
 
 /**
  * @psalm-type MailAddressesData = array{To: string, Subject: string, From: string, Reply-To: string}

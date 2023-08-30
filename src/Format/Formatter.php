@@ -1,6 +1,10 @@
 <?php
 
-namespace Phpcoder2022\SimpleMailer;
+namespace Phpcoder2022\SimpleMailer\Format;
+
+use Phpcoder2022\SimpleMailer\DTO\FieldData;
+use Phpcoder2022\SimpleMailer\DTO\FieldsData;
+use Phpcoder2022\SimpleMailer\Sender;
 
 /**
  * @psalm-import-type ErrorMessage from Sender

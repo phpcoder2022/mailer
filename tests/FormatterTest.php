@@ -3,7 +3,7 @@
 namespace Phpcoder2022\SimpleMailer\Tests;
 
 use Phpcoder2022\SimpleMailer\DependencyInjectionContainer;
-use Phpcoder2022\SimpleMailer\Formatter;
+use Phpcoder2022\SimpleMailer\Format\Formatter;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
