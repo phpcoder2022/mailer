@@ -6,20 +6,20 @@ namespace Phpcoder2022\SimpleMailer;
  * @psalm-type MailAddressesData = array{To: string, Subject: string, From: string, Reply-To: string}
  */
 
-class Mailer
+final class Mailer
 {
-    protected const ADDRESSES_DATA_PATH = 'mails.txt';
+    private const DEFAULT_ADDRESSES_DATA_PATH = 'mails.txt';
 
-    final private function __construct()
+    public function __construct(private readonly string $addressesDataPath = self::DEFAULT_ADDRESSES_DATA_PATH)
     {
     }
 
-    public static function sendMail(string $html): bool
+    public function sendMail(string $html): bool
     {
         if (self::isLocalhost()) {
             return false;
         }
-        $mailAddressesData = self::getMailAddressesAndSubject();
+        $mailAddressesData = $this->getMailAddressesAndSubject();
         return mail(
             $mailAddressesData['To'],
             $mailAddressesData['Subject'],
@@ -37,7 +37,7 @@ class Mailer
         );
     }
 
-    protected static function isLocalhost(): bool
+    private static function isLocalhost(): bool
     {
         /** @psalm-suppress PossiblyUndefinedArrayOffset */
         return !($_SERVER['SERVER_NAME'] ?? '')
@@ -49,10 +49,10 @@ class Mailer
     /**
      * @return MailAddressesData
      */
-    protected static function getMailAddressesAndSubject(): array
+    private function getMailAddressesAndSubject(): array
     {
-        $lineArr = is_file(static::ADDRESSES_DATA_PATH)
-            ? file(static::ADDRESSES_DATA_PATH, FILE_SKIP_EMPTY_LINES | FILE_IGNORE_NEW_LINES)
+        $lineArr = is_file($this->addressesDataPath)
+            ? file($this->addressesDataPath, FILE_SKIP_EMPTY_LINES | FILE_IGNORE_NEW_LINES)
             : [];
         $resultArr = ['To' => '', 'Subject' => '', 'From' => '', 'Reply-To' => ''];
         foreach ($resultArr as $entryKey => $_) {
@@ -63,7 +63,7 @@ class Mailer
                 }
             }
             if (!$resultArr[$entryKey]) {
-                throw new \UnexpectedValueException("Ключ $entryKey не определён в файле " . static::ADDRESSES_DATA_PATH);
+                throw new \UnexpectedValueException("Ключ $entryKey не определён в файле " . $this->addressesDataPath);
             }
         }
         return $resultArr;

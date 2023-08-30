@@ -22,7 +22,7 @@ class DependencyInjectionContainer implements ContainerInterface
                 $this->get(FieldsData::class)
             ),
             LoggerInterface::class => fn (): LoggerInterface => new Logger(),
-            Mailer::class => fn (): string => Mailer::class,
+            Mailer::class => fn (): Mailer => new Mailer(),
             FieldsData::class => fn (): FieldsData => AboutFormLandingFieldsData::createWithData(),
             HtmlViewer::class => fn (): HtmlViewer => new HtmlViewer(),
         ];
