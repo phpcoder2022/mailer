@@ -4,6 +4,7 @@ namespace Phpcoder2022\SimpleMailer;
 
 use Phpcoder2022\SimpleMailer\FieldsData\AboutFormLandingFieldsData;
 use Phpcoder2022\SimpleMailer\FieldsData\FieldsData;
+use Phpcoder2022\SimpleMailer\FieldsData\FieldsDataFabric;
 use Phpcoder2022\SimpleMailer\Format\Formatter;
 use Phpcoder2022\SimpleMailer\Format\FormatterInterface;
 use Phpcoder2022\SimpleMailer\Log\Logger;
@@ -13,6 +14,7 @@ use Phpcoder2022\SimpleMailer\ProcessHtml\HtmlViewer;
 use Phpcoder2022\SimpleMailer\Send\HtmlSendResponseFormatter;
 use Phpcoder2022\SimpleMailer\Send\JsonSendResponseFormatter;
 use Phpcoder2022\SimpleMailer\Send\SendResponseFormatter;
+use Phpcoder2022\SimpleMailer\Send\SendResponseFormatterFabric;
 use Phpcoder2022\SimpleMailer\Send\SendTexts;
 use Phpcoder2022\SimpleMailer\Send\Sender;
 use Psr\Container\ContainerInterface;
@@ -22,7 +24,7 @@ class DependencyInjectionContainer implements ContainerInterface
 {
     private array $lazyLoads = [];
 
-    public function __construct(private readonly bool $json)
+    public function __construct(bool $json)
     {
         $this->lazyLoads = [
             Sender::class => fn (): Sender => new Sender(
@@ -33,7 +35,7 @@ class DependencyInjectionContainer implements ContainerInterface
             ),
             SendTexts::class => fn (): SendTexts => new SendTexts(),
             SendResponseFormatter::class => fn (): SendResponseFormatter =>
-                $this->get($this->json ? JsonSendResponseFormatter::class : HtmlSendResponseFormatter::class),
+                SendResponseFormatterFabric::createSendResponseFormatterInstance($this, $json),
             HtmlSendResponseFormatter::class => fn (): HtmlSendResponseFormatter => new HtmlSendResponseFormatter(
                 $this->get(SendTexts::class),
                 $this->get(HtmlViewer::class),
@@ -51,7 +53,7 @@ class DependencyInjectionContainer implements ContainerInterface
                 $this->get(MailData::class)
             ),
             MailData::class => fn (): MailData => new MailData(),
-            FieldsData::class => fn (): FieldsData => AboutFormLandingFieldsData::createWithData(),
+            FieldsData::class => fn (): FieldsData => FieldsDataFabric::createFieldsDataInstance(),
             HtmlViewer::class => fn (): HtmlViewer => new HtmlViewer(),
         ];
         $this->lazyLoads[Formatter::class] = &$this->lazyLoads[FormatterInterface::class];
