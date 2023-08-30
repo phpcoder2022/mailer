@@ -11,13 +11,15 @@ class DependencyInjectionContainer implements \Psr\Container\ContainerInterface
         $this->lazyLoads = [
             Sender::class => fn (): Sender => new Sender(
                 $this->get(FormatterInterface::class),
-                $this->get(LoggerInterface::class)
+                $this->get(LoggerInterface::class),
+                $this->get(HtmlViewer::class),
             ),
             FormatterInterface::class => fn (): FormatterInterface => new Formatter(
                 $this->get(FieldsData::class)
             ),
             LoggerInterface::class => fn (): LoggerInterface => new Logger(),
             FieldsData::class => fn (): FieldsData => AboutFormLandingFieldsData::createWithData(),
+            HtmlViewer::class => fn (): HtmlViewer => new HtmlViewer(),
         ];
         $this->lazyLoads[Formatter::class] = &$this->lazyLoads[FormatterInterface::class];
         $this->lazyLoads[Logger::class] = &$this->lazyLoads[LoggerInterface::class];

@@ -30,6 +30,7 @@ final class Sender
     public function __construct(
         private readonly FormatterInterface $formatter,
         private readonly LoggerInterface $logger,
+        private readonly HtmlViewer $htmlViewer,
         private readonly string $textsFilePath = self::DEFAULT_TEXTS_FILE_PATH,
     ) {
     }
@@ -108,6 +109,6 @@ final class Sender
         }
         $this->logger->write(__METHOD__);
         $messageItems = array_map(fn ($subArr) => ['message' => $subArr['message']], $this->textItems);
-        return HtmlViewer::loadTemplate($this->title, $this->header, $messageItems, $this->lastFormComplete);
+        return $this->htmlViewer->loadTemplate($this->title, $this->header, $messageItems, $this->lastFormComplete);
     }
 }

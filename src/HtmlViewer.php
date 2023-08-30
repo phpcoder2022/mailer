@@ -2,11 +2,11 @@
 
 namespace Phpcoder2022\SimpleMailer;
 
-class HtmlViewer
+final class HtmlViewer
 {
     public const DEFAULT_TEMPLATE = './info.html';
 
-    final private function __construct()
+    public function __construct(private readonly string $templatePath = self::DEFAULT_TEMPLATE)
     {
     }
 
@@ -15,15 +15,13 @@ class HtmlViewer
      * @param string $header
      * @param array{message: string}[] $textItems
      * @param bool $successFormSent
-     * @param string $templatePath
      * @return string
      */
-    public static function loadTemplate(
+    public function loadTemplate(
         string $title,
         string $header,
         array $textItems,
         bool $successFormSent,
-        string $templatePath = ''
     ): string {
         $replaced = preg_replace(
             [
@@ -33,15 +31,15 @@ class HtmlViewer
                 '/#HTTP_REFER{1,2}ER#/u',
             ],
             [$title, $header, $successFormSent ? '\\3' : '', ($_SERVER['HTTP_REFERER'] ?? '') ?: '/'],
-            file_get_contents($templatePath ?: static::DEFAULT_TEMPLATE)
+            file_get_contents($this->templatePath)
         );
         $dom = new \DOMDocument();
         $dom->encoding = 'utf-8';
         @$dom->loadHtml($replaced);
         $textItemsList = $dom->getElementById('text-items');
-        $textItemsList = static::getCheckedDomElement($textItemsList, "Не найден элемент-список с id=\"text-items\"");
+        $textItemsList = self::getCheckedDomElement($textItemsList, "Не найден элемент-список с id=\"text-items\"");
         $templateItem = $textItemsList->firstElementChild;
-        $templateItem = static::getCheckedDomElement($templateItem, "Список #text-items не содержит элементов");
+        $templateItem = self::getCheckedDomElement($templateItem, "Список #text-items не содержит элементов");
         $textItemsList->textContent = '';
         foreach ($textItems as $textItem) {
             $newItem = $templateItem->cloneNode();
