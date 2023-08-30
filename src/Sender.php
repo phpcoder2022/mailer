@@ -30,10 +30,18 @@ final class Sender
     private ?string $header = null;
     private array $textItems = [];
 
+    /**
+     * @param FormatterInterface $formatter
+     * @param LoggerInterface $logger
+     * @param HtmlViewer $htmlViewer
+     * @param class-string $mailerClass
+     * @param string $textsFilePath
+     */
     public function __construct(
         private readonly FormatterInterface $formatter,
         private readonly LoggerInterface $logger,
         private readonly HtmlViewer $htmlViewer,
+        private readonly string $mailerClass,
         private readonly string $textsFilePath = self::DEFAULT_TEXTS_FILE_PATH,
     ) {
     }
@@ -46,7 +54,7 @@ final class Sender
         $mailMessage = null;
         if ($this->lastFormComplete) {
             /** @psalm-suppress PossiblyUndefinedArrayOffset : psalm сплющил исходный тип, ошибка ложноположительная  */
-            $this->lastOperationResult = Mailer::sendMail($formatResult['message']);
+            $this->lastOperationResult = [$this->mailerClass, 'sendMail']($formatResult['message']);
             $mailMessage = $texts['mail' . ($this->lastOperationResult ? 'Success' : 'Fail') . 'Header'];
             $this->logger->log(
                 $this->lastOperationResult ? LogLevel::INFO : LogLevel::WARNING,

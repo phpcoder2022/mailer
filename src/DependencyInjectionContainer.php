@@ -16,11 +16,13 @@ class DependencyInjectionContainer implements ContainerInterface
                 $this->get(FormatterInterface::class),
                 $this->get(LoggerInterface::class),
                 $this->get(HtmlViewer::class),
+                $this->get(Mailer::class),
             ),
             FormatterInterface::class => fn (): FormatterInterface => new Formatter(
                 $this->get(FieldsData::class)
             ),
             LoggerInterface::class => fn (): LoggerInterface => new Logger(),
+            Mailer::class => fn (): string => Mailer::class,
             FieldsData::class => fn (): FieldsData => AboutFormLandingFieldsData::createWithData(),
             HtmlViewer::class => fn (): HtmlViewer => new HtmlViewer(),
         ];
