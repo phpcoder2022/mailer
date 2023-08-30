@@ -11,22 +11,9 @@ use Psr\Log\LogLevel;
 /**
  * @psalm-type ErrorMessage = array{fieldName: string, message: string}
  * @psalm-type FormatFormDataResult = array{mode: 'mail', message: string} | array{mode: 'error', messages: non-empty-list<ErrorMessage>}
- * @psalm-type TextsArr = array{mailSuccessHeader: string, mailFailHeader: string, formCompleteFailHeader: string, mailFailTitle: string, mailSuccessTextItem: string, mailFailTextItem: string}
  */
 final class Sender
 {
-    public const DEFAULT_TEXTS_FILE_PATH = 'textsForSendForm.ini';
-
-    /** @var TextsArr */
-    private const TEXTS_ARR_STUB = [
-        'mailSuccessHeader' => '',
-        'mailFailHeader' => '',
-        'formCompleteFailHeader' => '',
-        'mailFailTitle' => '',
-        'mailSuccessTextItem' => '',
-        'mailFailTextItem' => '',
-    ];
-
     private ?bool $lastOperationResult = null;
     private ?bool $lastFormComplete = null;
     private ?string $title = null;
@@ -38,7 +25,7 @@ final class Sender
         private readonly LoggerInterface $logger,
         private readonly HtmlViewer $htmlViewer,
         private readonly Mailer $mailer,
-        private readonly string $textsFilePath = self::DEFAULT_TEXTS_FILE_PATH,
+        private readonly SendData $sendData,
     ) {
     }
 
@@ -46,12 +33,11 @@ final class Sender
     {
         $formatResult = $this->formatter->format($formData);
         $this->lastFormComplete = $formatResult['mode'] === 'mail';
-        $texts = $this->getTextsFromFile();
         $mailMessage = null;
         if ($this->lastFormComplete) {
             /** @psalm-suppress PossiblyUndefinedArrayOffset : psalm сплющил исходный тип, ошибка ложноположительная  */
             $this->lastOperationResult = $this->mailer->sendMail($formatResult['message']);
-            $mailMessage = $texts['mail' . ($this->lastOperationResult ? 'Success' : 'Fail') . 'Header'];
+            $mailMessage = $this->sendData->{'mail' . ($this->lastOperationResult ? 'Success' : 'Fail') . 'Header'};
             $this->logger->log(
                 $this->lastOperationResult ? LogLevel::INFO : LogLevel::WARNING,
                 '',
@@ -60,38 +46,14 @@ final class Sender
         } else {
             $this->lastOperationResult = false;
         }
-        $this->header = $mailMessage ?? $texts['formCompleteFailHeader'];
+        $this->header = $mailMessage ?? $this->sendData->formCompleteFailHeader;
         $this->textItems = $formatResult['messages'] ?? [$this->lastOperationResult
-            ? ['message' => $texts['mailSuccessTextItem']]
-            : ['message' => $texts['mailFailTextItem']]
+            ? ['message' => $this->sendData->mailSuccessTextItem]
+            : ['message' => $this->sendData->mailFailTextItem]
         ];
         $this->title = $this->lastFormComplete && !$this->lastOperationResult
-            ? $texts['mailFailTitle']
+            ? $this->sendData->mailFailTitle
             : $this->header;
-    }
-
-    /** @return TextsArr */
-    private function getTextsFromFile(): array
-    {
-        if (!is_file($this->textsFilePath)) {
-            $errorMessage = 'Файл настроек \"' . $this->textsFilePath .  '\" для метода ' . __METHOD__ . 'не найден';
-            throw new \UnexpectedValueException($errorMessage);
-        }
-        $texts = parse_ini_file($this->textsFilePath);
-        $result = self::TEXTS_ARR_STUB;
-        $notExistsKeys = [];
-        foreach ($result as $key => $_) {
-            $result[$key] = is_string($texts[$key]) ? $texts[$key] : '';
-            if (!$result[$key]) {
-                $notExistsKeys[] = $key;
-            }
-        }
-        if ($notExistsKeys) {
-            $errorMessage = "Тексты в файле \"$this->textsFilePath\": не хватает следующих ключей: "
-                . join(', ', $notExistsKeys);
-            throw new \UnexpectedValueException($errorMessage);
-        }
-        return $result;
     }
 
     public function getLastOperationResult(): ?bool
