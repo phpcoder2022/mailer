@@ -2,7 +2,7 @@
 
 namespace Phpcoder2022\SimpleMailer\FieldsData;
 
-final class FieldsDataFabric
+final class FieldsDataFactory
 {
     final private function __construct()
     {

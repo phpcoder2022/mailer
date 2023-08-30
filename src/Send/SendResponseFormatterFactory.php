@@ -4,7 +4,7 @@ namespace Phpcoder2022\SimpleMailer\Send;
 
 use Phpcoder2022\SimpleMailer\DependencyInjectionContainer;
 
-final class SendResponseFormatterFabric
+final class SendResponseFormatterFactory
 {
     final private function __construct()
     {
