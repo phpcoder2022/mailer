@@ -16,19 +16,16 @@ final class SenderTest extends TestCase
     ];
     private const FORM_NOT_COMPLETE_TEXT = 'Форма неправильно заполнена';
 
-    private DependencyInjectionContainer $container;
-    private Sender $sender;
-
     #[DataProvider('sendFormProviderForLocalhost')]
     public function testSendForm(array $formData, bool $json, array $resultScheme): void
     {
-        $this->container ??= new DependencyInjectionContainer();
-        $this->sender ??= $this->container->get(Sender::class);
-        $this->sender->sendForm($formData);
+        $container = new DependencyInjectionContainer($json);
+        $sender = $container->get(Sender::class);
+        $sendResponseResult = $sender->sendForm($formData);
         $actualResult = [
-            'result' => $this->sender->getLastOperationResult(),
-            'formComplete' => $this->sender->getLastFormComplete(),
-            'message' => ($getResultAs = [$this->sender, $json ? 'getResultAsJson' : 'getResultAsHtml'])()
+            'result' => $sendResponseResult->operationResult,
+            'formComplete' => $sendResponseResult->formComplete,
+            'message' => $sendResponseResult->resultAsString,
         ];
         $this->assertEquals($resultScheme['result'], $actualResult['result']);
         $this->assertEquals($resultScheme['formComplete'], $actualResult['formComplete']);

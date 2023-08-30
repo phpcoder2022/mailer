@@ -1,6 +1,6 @@
 <?php
 
-use Phpcoder2022\SimpleMailer\DTO\AboutFormLandingFieldsData;
+use Phpcoder2022\SimpleMailer\DependencyInjectionContainer;
 use Phpcoder2022\SimpleMailer\Format\Formatter;
 
 require_once './vendor/autoload.php';
@@ -10,7 +10,7 @@ if (!isset($argv)) {
 }
 $input = json_decode(file_get_contents('testInput.json'), true);
 $output = [];
-$formatter = new Formatter(AboutFormLandingFieldsData::createWithData());
+$formatter = (new DependencyInjectionContainer(true))->get(Formatter::class);
 foreach ($input as ['method' => $method, 'args' => $args]) {
     $output[] = [
         'method' => $method,
