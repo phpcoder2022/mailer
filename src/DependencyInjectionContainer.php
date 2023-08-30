@@ -24,7 +24,7 @@ class DependencyInjectionContainer implements ContainerInterface
 {
     private array $lazyLoads = [];
 
-    public function __construct(bool $json)
+    public function __construct(bool $json, string $formType = '')
     {
         $this->lazyLoads = [
             Sender::class => fn (): Sender => new Sender(
@@ -53,7 +53,10 @@ class DependencyInjectionContainer implements ContainerInterface
                 $this->get(MailData::class)
             ),
             MailData::class => fn (): MailData => new MailData(),
-            FieldsData::class => fn (): FieldsData => FieldsDataFactory::createFieldsDataInstance(),
+            FieldsData::class => fn (): FieldsData => FieldsDataFactory::createFieldsDataInstance(
+                $this,
+                ...array_filter([$formType]),
+            ),
             HtmlViewer::class => fn (): HtmlViewer => new HtmlViewer(),
         ];
         $this->lazyLoads[Formatter::class] = &$this->lazyLoads[FormatterInterface::class];
