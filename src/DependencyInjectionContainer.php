@@ -6,6 +6,7 @@ use Phpcoder2022\SimpleMailer\DTO\AboutFormLandingFieldsData;
 use Phpcoder2022\SimpleMailer\DTO\FieldsData;
 use Phpcoder2022\SimpleMailer\Format\Formatter;
 use Phpcoder2022\SimpleMailer\Format\FormatterInterface;
+use Phpcoder2022\SimpleMailer\Mail\MailData;
 use Phpcoder2022\SimpleMailer\Mail\Mailer;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
@@ -27,7 +28,10 @@ class DependencyInjectionContainer implements ContainerInterface
                 $this->get(FieldsData::class)
             ),
             LoggerInterface::class => fn (): LoggerInterface => new Logger(),
-            Mailer::class => fn (): Mailer => new Mailer(),
+            Mailer::class => fn (): Mailer => new Mailer(
+                $this->get(MailData::class)
+            ),
+            MailData::class => fn (): MailData => new MailData(),
             FieldsData::class => fn (): FieldsData => AboutFormLandingFieldsData::createWithData(),
             HtmlViewer::class => fn (): HtmlViewer => new HtmlViewer(),
         ];
