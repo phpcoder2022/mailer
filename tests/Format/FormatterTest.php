@@ -1,6 +1,6 @@
 <?php
 
-namespace Phpcoder2022\SimpleMailer\Tests;
+namespace Phpcoder2022\SimpleMailer\Tests\Format;
 
 use Phpcoder2022\SimpleMailer\DependencyInjectionContainer;
 use Phpcoder2022\SimpleMailer\Format\Formatter;
