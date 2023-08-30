@@ -3,7 +3,7 @@
 namespace Phpcoder2022\SimpleMailer\Format;
 
 use Phpcoder2022\SimpleMailer\DTO\FieldsData;
-use Phpcoder2022\SimpleMailer\Sender;
+use Phpcoder2022\SimpleMailer\Send\Sender;
 
 /**
  * @psalm-import-type FormatFormDataResult from Sender

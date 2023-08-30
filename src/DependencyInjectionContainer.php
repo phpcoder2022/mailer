@@ -6,8 +6,11 @@ use Phpcoder2022\SimpleMailer\DTO\AboutFormLandingFieldsData;
 use Phpcoder2022\SimpleMailer\DTO\FieldsData;
 use Phpcoder2022\SimpleMailer\Format\Formatter;
 use Phpcoder2022\SimpleMailer\Format\FormatterInterface;
+use Phpcoder2022\SimpleMailer\Log\Logger;
 use Phpcoder2022\SimpleMailer\Mail\MailData;
 use Phpcoder2022\SimpleMailer\Mail\Mailer;
+use Phpcoder2022\SimpleMailer\ProcessHtml\HtmlViewer;
+use Phpcoder2022\SimpleMailer\Send\Sender;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 

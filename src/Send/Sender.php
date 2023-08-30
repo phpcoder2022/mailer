@@ -1,9 +1,10 @@
 <?php
 
-namespace Phpcoder2022\SimpleMailer;
+namespace Phpcoder2022\SimpleMailer\Send;
 
 use Phpcoder2022\SimpleMailer\Format\FormatterInterface;
 use Phpcoder2022\SimpleMailer\Mail\Mailer;
+use Phpcoder2022\SimpleMailer\ProcessHtml\HtmlViewer;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 

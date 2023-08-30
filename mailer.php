@@ -1,7 +1,7 @@
 <?php
 
-use Phpcoder2022\SimpleMailer\Sender;
 use Phpcoder2022\SimpleMailer\DependencyInjectionContainer;
+use Phpcoder2022\SimpleMailer\Send\Sender;
 
 require_once './vendor/autoload.php';
 
