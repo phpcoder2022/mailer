@@ -1,6 +1,6 @@
 <?php
 
-namespace Phpcoder2022\SimpleMailer\Tests;
+namespace Phpcoder2022\SimpleMailer\Tests\Send;
 
 use Phpcoder2022\SimpleMailer\DependencyInjectionContainer;
 use Phpcoder2022\SimpleMailer\Send\Sender;
