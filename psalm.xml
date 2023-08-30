@@ -16,7 +16,7 @@
         <UnsupportedPropertyReferenceUsage errorLevel="suppress" />
         <PropertyNotSetInConstructor>
             <errorLevel type="suppress">
-                <file name="src/Send/SendData.php" />
+                <file name="src/Send/SendTexts.php" />
             </errorLevel>
         </PropertyNotSetInConstructor>
     </issueHandlers>
