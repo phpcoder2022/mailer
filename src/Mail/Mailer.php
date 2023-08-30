@@ -2,7 +2,7 @@
 
 namespace Phpcoder2022\SimpleMailer\Mail;
 
-final class Mailer
+final class Mailer implements MailerInterface
 {
     public function __construct(private readonly MailData $mailData)
     {

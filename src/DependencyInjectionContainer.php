@@ -2,7 +2,6 @@
 
 namespace Phpcoder2022\SimpleMailer;
 
-use Phpcoder2022\SimpleMailer\FieldsData\AboutFormLandingFieldsData;
 use Phpcoder2022\SimpleMailer\FieldsData\FieldsData;
 use Phpcoder2022\SimpleMailer\FieldsData\FieldsDataFabric;
 use Phpcoder2022\SimpleMailer\Format\Formatter;
@@ -10,6 +9,7 @@ use Phpcoder2022\SimpleMailer\Format\FormatterInterface;
 use Phpcoder2022\SimpleMailer\Log\Logger;
 use Phpcoder2022\SimpleMailer\Mail\MailData;
 use Phpcoder2022\SimpleMailer\Mail\Mailer;
+use Phpcoder2022\SimpleMailer\Mail\MailerInterface;
 use Phpcoder2022\SimpleMailer\ProcessHtml\HtmlViewer;
 use Phpcoder2022\SimpleMailer\Send\HtmlSendResponseFormatter;
 use Phpcoder2022\SimpleMailer\Send\JsonSendResponseFormatter;
@@ -30,7 +30,7 @@ class DependencyInjectionContainer implements ContainerInterface
             Sender::class => fn (): Sender => new Sender(
                 $this->get(FormatterInterface::class),
                 $this->get(LoggerInterface::class),
-                $this->get(Mailer::class),
+                $this->get(MailerInterface::class),
                 $this->get(SendResponseFormatter::class)
             ),
             SendTexts::class => fn (): SendTexts => new SendTexts(),
@@ -49,7 +49,7 @@ class DependencyInjectionContainer implements ContainerInterface
                 $this->get(FieldsData::class),
             ),
             LoggerInterface::class => fn (): LoggerInterface => new Logger(),
-            Mailer::class => fn (): Mailer => new Mailer(
+            MailerInterface::class => fn (): MailerInterface => new Mailer(
                 $this->get(MailData::class)
             ),
             MailData::class => fn (): MailData => new MailData(),
@@ -58,6 +58,7 @@ class DependencyInjectionContainer implements ContainerInterface
         ];
         $this->lazyLoads[Formatter::class] = &$this->lazyLoads[FormatterInterface::class];
         $this->lazyLoads[Logger::class] = &$this->lazyLoads[LoggerInterface::class];
+        $this->lazyLoads[Mailer::class] = &$this->lazyLoads[MailerInterface::class];
     }
 
     public function get(string $id): mixed
