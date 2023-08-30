@@ -2,6 +2,9 @@
 
 namespace Phpcoder2022\SimpleMailer;
 
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
+
 /**
  * @psalm-type ErrorMessage = array{fieldName: string, message: string}
  * @psalm-type FormatFormDataResult = array{mode: 'mail', message: string} | array{mode: 'error', messages: non-empty-list<ErrorMessage>}
@@ -45,7 +48,11 @@ final class Sender
             /** @psalm-suppress PossiblyUndefinedArrayOffset : psalm сплющил исходный тип, ошибка ложноположительная  */
             $this->lastOperationResult = Mailer::sendMail($formatResult['message']);
             $mailMessage = $texts['mail' . ($this->lastOperationResult ? 'Success' : 'Fail') . 'Header'];
-            $this->logger->write(['formData' => $formData, 'result' => $this->lastOperationResult]);
+            $this->logger->log(
+                $this->lastOperationResult ? LogLevel::INFO : LogLevel::WARNING,
+                '',
+                ['formData' => $formData, 'result' => $this->lastOperationResult],
+            );
         } else {
             $this->lastOperationResult = false;
         }
@@ -98,7 +105,7 @@ final class Sender
         if (is_null($this->header)) {
             return null;
         }
-        $this->logger->write(__METHOD__);
+        $this->logger->info(__METHOD__);
         return json_encode(['header' => $this->header, 'textItems' => $this->textItems], JSON_UNESCAPED_UNICODE);
     }
 
@@ -107,7 +114,7 @@ final class Sender
         if (is_null($this->header) || is_null($this->title) || is_null($this->lastFormComplete)) {
             return null;
         }
-        $this->logger->write(__METHOD__);
+        $this->logger->info(__METHOD__);
         $messageItems = array_map(fn ($subArr) => ['message' => $subArr['message']], $this->textItems);
         return $this->htmlViewer->loadTemplate($this->title, $this->header, $messageItems, $this->lastFormComplete);
     }

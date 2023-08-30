@@ -2,7 +2,10 @@
 
 namespace Phpcoder2022\SimpleMailer;
 
-class DependencyInjectionContainer implements \Psr\Container\ContainerInterface
+use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
+
+class DependencyInjectionContainer implements ContainerInterface
 {
     private array $lazyLoads = [];
 
