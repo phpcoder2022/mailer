@@ -1,6 +1,6 @@
 <?php
 
-namespace Phpcoder2022\SimpleMailer\DTO;
+namespace Phpcoder2022\SimpleMailer\FieldsData;
 
 /**
  * @template-implements \IteratorAggregate<string, FieldData>

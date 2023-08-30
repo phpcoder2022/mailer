@@ -2,8 +2,8 @@
 
 namespace Phpcoder2022\SimpleMailer\Format;
 
-use Phpcoder2022\SimpleMailer\DTO\FieldData;
-use Phpcoder2022\SimpleMailer\DTO\FieldsData;
+use Phpcoder2022\SimpleMailer\FieldsData\FieldData;
+use Phpcoder2022\SimpleMailer\FieldsData\FieldsData;
 use Phpcoder2022\SimpleMailer\Send\Sender;
 
 /**

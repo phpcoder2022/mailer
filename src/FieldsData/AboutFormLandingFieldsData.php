@@ -1,6 +1,6 @@
 <?php
 
-namespace Phpcoder2022\SimpleMailer\DTO;
+namespace Phpcoder2022\SimpleMailer\FieldsData;
 
 use Phpcoder2022\SimpleMailer\Format\Formatter;
 use Phpcoder2022\SimpleMailer\Format\GrammaticalGender;

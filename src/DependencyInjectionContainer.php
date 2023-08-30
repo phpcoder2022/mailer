@@ -2,8 +2,8 @@
 
 namespace Phpcoder2022\SimpleMailer;
 
-use Phpcoder2022\SimpleMailer\DTO\AboutFormLandingFieldsData;
-use Phpcoder2022\SimpleMailer\DTO\FieldsData;
+use Phpcoder2022\SimpleMailer\FieldsData\AboutFormLandingFieldsData;
+use Phpcoder2022\SimpleMailer\FieldsData\FieldsData;
 use Phpcoder2022\SimpleMailer\Format\Formatter;
 use Phpcoder2022\SimpleMailer\Format\FormatterInterface;
 use Phpcoder2022\SimpleMailer\Log\Logger;
