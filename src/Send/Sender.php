@@ -4,6 +4,7 @@ namespace Phpcoder2022\SimpleMailer\Send;
 
 use Phpcoder2022\SimpleMailer\Format\FormatterInterface;
 use Phpcoder2022\SimpleMailer\Mail\Mailer;
+use Phpcoder2022\SimpleMailer\Mail\MailerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
@@ -17,7 +18,7 @@ final class Sender
     public function __construct(
         private readonly FormatterInterface $formatter,
         private readonly LoggerInterface $logger,
-        private readonly Mailer $mailer,
+        private readonly MailerInterface $mailer,
         private readonly SendResponseFormatter $sendResponseFormatter,
     ) {
     }
