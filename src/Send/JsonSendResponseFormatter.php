@@ -2,7 +2,7 @@
 
 namespace Phpcoder2022\SimpleMailer\Send;
 
-use Phpcoder2022\SimpleMailer\Log\Logger;
+use Phpcoder2022\SimpleMailer\Log\LogFormatter;
 
 /**
  * @psalm-import-type TextItems from SendResponseFormatter
@@ -12,7 +12,7 @@ final class JsonSendResponseFormatter extends SendResponseFormatter
 {
     public function __construct(
         SendTexts $sendTexts,
-        private readonly Logger $logger,
+        private readonly LogFormatter $logger,
     ) {
         parent::__construct($sendTexts);
     }
@@ -26,7 +26,7 @@ final class JsonSendResponseFormatter extends SendResponseFormatter
      */
     protected function getResultAsString(string $header, string $title, bool $formComplete, array $textItems): string
     {
-        $this->logger->info(__METHOD__);
+        $this->logger->write(__METHOD__);
         return json_encode(['header' => $header, 'textItems' => $textItems], JSON_UNESCAPED_UNICODE);
     }
 }

@@ -3,9 +3,8 @@
 namespace Phpcoder2022\SimpleMailer\Send;
 
 use Phpcoder2022\SimpleMailer\Format\FormatterInterface;
-use Phpcoder2022\SimpleMailer\Mail\Mailer;
+use Phpcoder2022\SimpleMailer\Log\LogFormatter;
 use Phpcoder2022\SimpleMailer\Mail\MailerInterface;
-use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
 /**
@@ -17,7 +16,7 @@ final class Sender
 {
     public function __construct(
         private readonly FormatterInterface $formatter,
-        private readonly LoggerInterface $logger,
+        private readonly LogFormatter $logger,
         private readonly MailerInterface $mailer,
         private readonly SendResponseFormatter $sendResponseFormatter,
     ) {
@@ -30,10 +29,9 @@ final class Sender
         if ($formComplete) {
             /** @psalm-suppress PossiblyUndefinedArrayOffset : psalm сплющил исходный тип, ошибка ложноположительная  */
             $operationResult = $this->mailer->sendMail($formatResult['message']);
-            $this->logger->log(
-                $operationResult ? LogLevel::INFO : LogLevel::WARNING,
-                '',
-                ['formData' => $formData, 'result' => $operationResult],
+            $this->logger->write(
+                data: ['formData' => $formData, 'result' => $operationResult],
+                level: $operationResult ? LogLevel::INFO : LogLevel::WARNING,
             );
         } else {
             $operationResult = false;

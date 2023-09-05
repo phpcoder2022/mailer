@@ -2,7 +2,7 @@
 
 namespace Phpcoder2022\SimpleMailer\Send;
 
-use Phpcoder2022\SimpleMailer\Log\Logger;
+use Phpcoder2022\SimpleMailer\Log\LogFormatter;
 use Phpcoder2022\SimpleMailer\ProcessHtml\HtmlViewer;
 
 /**
@@ -14,7 +14,7 @@ final class HtmlSendResponseFormatter extends SendResponseFormatter
     public function __construct(
         SendTexts $sendTexts,
         private readonly HtmlViewer $htmlViewer,
-        private readonly Logger $logger
+        private readonly LogFormatter $logger
     ) {
         parent::__construct($sendTexts);
     }
@@ -28,7 +28,7 @@ final class HtmlSendResponseFormatter extends SendResponseFormatter
      */
     protected function getResultAsString(string $header, string $title, bool $formComplete, array $textItems): string
     {
-        $this->logger->info(__METHOD__);
+        $this->logger->write(__METHOD__);
         $messageItems = array_map(fn ($subArr) => ['message' => $subArr['message']], $textItems);
         return $this->htmlViewer->loadTemplate($title, $header, $messageItems, $formComplete);
     }

@@ -6,6 +6,7 @@ use Phpcoder2022\SimpleMailer\FieldsData\FieldsData;
 use Phpcoder2022\SimpleMailer\FieldsData\FieldsDataFactory;
 use Phpcoder2022\SimpleMailer\Format\Formatter;
 use Phpcoder2022\SimpleMailer\Format\FormatterInterface;
+use Phpcoder2022\SimpleMailer\Log\LogFormatter;
 use Phpcoder2022\SimpleMailer\Log\Logger;
 use Phpcoder2022\SimpleMailer\Mail\MailData;
 use Phpcoder2022\SimpleMailer\Mail\Mailer;
@@ -29,7 +30,7 @@ class DependencyInjectionContainer implements ContainerInterface
         $this->lazyLoads = [
             Sender::class => fn (): Sender => new Sender(
                 $this->get(FormatterInterface::class),
-                $this->get(LoggerInterface::class),
+                $this->get(LogFormatter::class),
                 $this->get(MailerInterface::class),
                 $this->get(SendResponseFormatter::class)
             ),
@@ -39,16 +40,19 @@ class DependencyInjectionContainer implements ContainerInterface
             HtmlSendResponseFormatter::class => fn (): HtmlSendResponseFormatter => new HtmlSendResponseFormatter(
                 $this->get(SendTexts::class),
                 $this->get(HtmlViewer::class),
-                $this->get(Logger::class),
+                $this->get(LogFormatter::class),
             ),
             JsonSendResponseFormatter::class => fn (): JsonSendResponseFormatter => new JsonSendResponseFormatter(
                 $this->get(SendTexts::class),
-                $this->get(Logger::class),
+                $this->get(LogFormatter::class),
             ),
             FormatterInterface::class => fn (): FormatterInterface => new Formatter(
                 $this->get(FieldsData::class),
             ),
             LoggerInterface::class => fn (): LoggerInterface => new Logger(),
+            LogFormatter::class => fn (): LogFormatter => new LogFormatter(
+                $this->get(LoggerInterface::class)
+            ),
             MailerInterface::class => fn (): MailerInterface => new Mailer(
                 $this->get(MailData::class)
             ),
