@@ -8,7 +8,6 @@ final class FieldsDataFactory
 {
     public const FORM_TYPES = [
         'about' => AboutFormLandingFieldsData::class,
-        'onlyName' => OnlyNameFieldsData::class,
     ];
 
     final private function __construct()
