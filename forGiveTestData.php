@@ -10,7 +10,7 @@ if (!isset($argv)) {
 }
 $input = json_decode(file_get_contents('testInput.json'), true);
 $output = [];
-$formatter = (new DependencyInjectionContainer(true))->get(Formatter::class);
+$formatter = (new DependencyInjectionContainer())->get(Formatter::class);
 foreach ($input as ['method' => $method, 'args' => $args]) {
     $output[] = [
         'method' => $method,

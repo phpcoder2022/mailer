@@ -15,7 +15,7 @@ final class FormatterTest extends TestCase
     #[DataProvider('formatProvider')]
     public function testFormat(array $formData, array $result): void
     {
-        $this->container ??= new DependencyInjectionContainer(true);
+        $this->container ??= new DependencyInjectionContainer();
         $this->formatter ??= $this->container->get(Formatter::class);
         $actualResult = $this->formatter->format($formData);
         $this->assertEquals($result, $actualResult);

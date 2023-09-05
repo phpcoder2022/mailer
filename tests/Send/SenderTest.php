@@ -19,7 +19,7 @@ final class SenderTest extends TestCase
     #[DataProvider('sendFormProviderForLocalhost')]
     public function testSendForm(array $formData, bool $json, array $resultScheme): void
     {
-        $container = new DependencyInjectionContainer($json);
+        $container = new DependencyInjectionContainer($json ? 'json' : '');
         $sender = $container->get(Sender::class);
         $sendResponseResult = $sender->sendForm($formData);
         $actualResult = [

@@ -26,7 +26,7 @@ class DependencyInjectionContainer implements ContainerInterface
     private array $lazyLoads = [];
     private array $loaded = [];
 
-    public function __construct(bool $json, string $formType = '')
+    public function __construct(string $responseFormat = '', string $formType = '')
     {
         $this->lazyLoads = [
             Sender::class => fn (): Sender => new Sender(
@@ -37,7 +37,7 @@ class DependencyInjectionContainer implements ContainerInterface
             ),
             SendTexts::class => fn (): SendTexts => new SendTexts(),
             SendResponseFormatter::class => fn (): SendResponseFormatter =>
-                SendResponseFormatterFactory::createSendResponseFormatterInstance($this, $json),
+                SendResponseFormatterFactory::build($this, $responseFormat),
             HtmlSendResponseFormatter::class => fn (): HtmlSendResponseFormatter => new HtmlSendResponseFormatter(
                 $this->get(SendTexts::class),
                 $this->get(HtmlViewer::class),
