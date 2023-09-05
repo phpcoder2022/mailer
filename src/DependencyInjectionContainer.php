@@ -24,6 +24,7 @@ use Psr\Log\LoggerInterface;
 class DependencyInjectionContainer implements ContainerInterface
 {
     private array $lazyLoads = [];
+    private array $loaded = [];
 
     public function __construct(bool $json, string $formType = '')
     {
@@ -71,7 +72,7 @@ class DependencyInjectionContainer implements ContainerInterface
     public function get(string $id): mixed
     {
         return $this->has($id)
-            ? ($this->lazyLoads[$id])()
+            ? $this->loaded[$id] ??= ($this->lazyLoads[$id])()
             : throw new \UnexpectedValueException("Элемент контейнера \"$id\" не найден");
     }
 
