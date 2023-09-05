@@ -58,10 +58,7 @@ class DependencyInjectionContainer implements ContainerInterface
                 $this->get(MailData::class)
             ),
             MailData::class => fn (): MailData => new MailData(),
-            FieldsData::class => fn (): FieldsData => FieldsDataFactory::createFieldsDataInstance(
-                $this,
-                ...array_filter([$formType]),
-            ),
+            FieldsData::class => fn (): FieldsData => FieldsDataFactory::build($this, $formType),
             HtmlViewer::class => fn (): HtmlViewer => new HtmlViewer(),
         ];
         $this->lazyLoads[Formatter::class] = &$this->lazyLoads[FormatterInterface::class];
